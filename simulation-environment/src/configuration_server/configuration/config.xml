@@ -1,0 +1,30 @@
+<Configuration>
+	<Models>
+		<Model persist="true">
+			<Name>simulation_model</Name>
+			<IP>localhost</IP>
+			<Port>5562</Port>
+		</Model>
+		<Model persist="true">
+			<Name>event_queue</Name>
+			<IP>localhost</IP>
+			<Port>5563</Port>
+		</Model>
+		<Model persist="true">
+			<Name>model_1</Name>
+			<IP>localhost</IP>
+			<Port>5564</Port>
+		</Model>
+		<Model persist="true">
+			<Name>model_2</Name>
+			<IP>localhost</IP>
+			<Port>5565</Port>
+		</Model>
+	</Models>
+	
+	<OtherPorts>
+		<FrontendPort>5570</FrontendPort>
+		<SynchronizationPort>5560</SynchronizationPort>
+	</OtherPorts>
+</Configuration>
+
