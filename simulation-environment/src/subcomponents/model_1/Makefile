@@ -7,4 +7,4 @@ SRCS= main.cpp Model_1.cpp ../../communication/Subscriber.cpp ../../communicatio
 BINDIR = ../../../bin
 OBJDIR = ../../../obj
 
-include ../../makefile.default.mk
+include ../../../makefile.default.mk

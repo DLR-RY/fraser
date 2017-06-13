@@ -5,4 +5,4 @@ SRCS= main.cpp SimulationModel.cpp ../communication/Subscriber.cpp ../communicat
 BINDIR = ../../bin
 OBJDIR = ../../obj
 
-include ../makefile.default.mk
+include ../../makefile.default.mk

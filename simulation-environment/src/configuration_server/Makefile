@@ -4,4 +4,4 @@ SRCS= main.cpp ConfigurationServer.cpp
 BINDIR = ../../bin
 OBJDIR = ../../obj
 
-include ../makefile.default.mk
+include ../../makefile.default.mk

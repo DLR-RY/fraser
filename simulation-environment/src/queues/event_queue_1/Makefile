@@ -5,4 +5,4 @@ SRCS= main.cpp Queue.cpp ../../communication/Subscriber.cpp ../../communication/
 BINDIR = ../../../bin
 OBJDIR = ../../../obj
 
-include ../../makefile.default.mk
+include ../../../makefile.default.mk
