@@ -10,6 +10,7 @@
 
 static const char BREAKPNTS_PATH[] = "../src/subcomponents/model_2/savepoints/";
 static const char FILE_EXTENTION[] = "_savefile_model_2.xml";
+static const char CONFIG_DIR[] = "../src/subcomponents/model_2/configuration/";
 static const char CONFIG_PATH[] =
 		"../src/subcomponents/model_2/configuration/config.xml";
 
@@ -33,6 +34,18 @@ void Model2::configure(std::string filename) {
 
 bool Model2::prepare() {
 	mSubscriber.setOwnershipName(mName);
+
+	boost::filesystem::path dir1(BREAKPNTS_PATH);
+	if (!boost::filesystem::exists(dir1)) {
+		boost::filesystem::create_directory(dir1);
+		std::cout << "Create savepoints-directory for Model2" << "\n";
+	}
+
+	boost::filesystem::path dir2(CONFIG_DIR);
+	if (!boost::filesystem::exists(dir2)) {
+		boost::filesystem::create_directory(dir2);
+		std::cout << "Create config-directory for Model2" << "\n";
+	}
 
 	if (!mPublisher.bindSocket(mDealer.getPortNumFrom(mName))) {
 		return false;
@@ -62,12 +75,13 @@ bool Model2::prepare() {
 	mSubscriber.subscribeTo(Event("Configure"));
 
 	// Synchronization
-	if(!mSubscriber.prepareSubSynchronization(mDealer.getIPFrom("simulation_model"),
+	if (!mSubscriber.prepareSubSynchronization(
+			mDealer.getIPFrom("simulation_model"),
 			mDealer.getSynchronizationPort())) {
 		return false;
 	}
 
-	if(!mSubscriber.synchronizeSub()) {
+	if (!mSubscriber.synchronizeSub()) {
 		return false;
 	}
 

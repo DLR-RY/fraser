@@ -10,6 +10,7 @@
 
 static const char BREAKPNTS_PATH[] = "../src/subcomponents/model_1/savepoints/";
 static const char FILE_EXTENTION[] = "_savefile_model_1.xml";
+static const char CONFIG_DIR[] = "../src/subcomponents/model_1/configuration/";
 static const char CONFIG_PATH[] =
 		"../src/subcomponents/model_1/configuration/config.xml";
 
@@ -33,6 +34,19 @@ void Model1::configure(std::string filename) {
 
 bool Model1::prepare() {
 	mSubscriber.setOwnershipName(mName);
+
+	boost::filesystem::path dir1(BREAKPNTS_PATH);
+
+	if (!boost::filesystem::exists(dir1)) {
+		boost::filesystem::create_directory(dir1);
+		std::cout << "Create savepoints-directory for Model1" << "\n";
+	}
+
+	boost::filesystem::path dir2(CONFIG_DIR);
+	if (!boost::filesystem::exists(dir2)) {
+		boost::filesystem::create_directory(dir2);
+		std::cout << "Create config-directory for Model1" << "\n";
+	}
 
 	if (!mPublisher.bindSocket(mDealer.getPortNumFrom(mName))) {
 		return false;

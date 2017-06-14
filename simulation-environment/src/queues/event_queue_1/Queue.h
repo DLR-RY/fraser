@@ -13,6 +13,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <boost/filesystem.hpp>
 #include <zmq.hpp>
 
 #include "communication/Dealer.h"

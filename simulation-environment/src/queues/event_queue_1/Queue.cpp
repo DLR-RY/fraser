@@ -11,6 +11,7 @@
 
 static const char BREAKPNTS_PATH[] = "../src/queues/event_queue_1/savepoints/";
 static const char FILE_EXTENTION[] = "_savefile_queue.xml";
+static const char CONFIG_DIR[] = "../src/queues/event_queue_1/configuration/";
 static const char CONFIG_PATH[] =
 		"../src/queues/event_queue_1/configuration/config.xml";
 
@@ -41,6 +42,18 @@ void Queue::setDefaultEvents() {
 
 bool Queue::prepare() {
 	mSubscriber.setOwnershipName(mName);
+
+	boost::filesystem::path dir1(BREAKPNTS_PATH);
+	if (!boost::filesystem::exists(dir1)) {
+		boost::filesystem::create_directory(dir1);
+		std::cout << "Create savepoints-directory for Queue" << "\n";
+	}
+
+	boost::filesystem::path dir2(CONFIG_DIR);
+	if (!boost::filesystem::exists(dir2)) {
+		boost::filesystem::create_directory(dir2);
+		std::cout << "Create config-directory for Queue" << "\n";
+	}
 
 	if (!mPublisher.bindSocket(mDealer.getPortNumFrom(mName))) {
 		return false;

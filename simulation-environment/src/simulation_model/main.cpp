@@ -13,13 +13,12 @@
 #include "SimulationModel.h"
 
 SimulationModel simulation("simulation_model", "Simulation Environment");
-std::string filename = "../src/simulation_model/configuration/config.xml";
+static const char CONFIG_PATH[] =
+		"../src/simulation_model/configuration/config.xml";
 
 void startSimulationThread() {
 	try {
-		if (filename != "") {
-			simulation.configure(filename);
-		}
+		simulation.configure(CONFIG_PATH);
 
 		simulation.run();
 	} catch (boost::thread_interrupted&) {

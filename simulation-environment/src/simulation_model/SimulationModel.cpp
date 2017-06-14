@@ -9,6 +9,11 @@
 
 #include <iostream>
 
+static const char BREAKPNTS_PATH[] = "../src/simulation_model/savepoints/";
+static const char FILE_EXTENTION[] = "_savefile_simulation.xml";
+static const char CONFIG_DIR[] = "../src/simulation_model/configuration/";
+static const char CONFIG_FILE[] = "../src/simulation_model/configuration/config.xml";
+
 SimulationModel::SimulationModel(std::string name, std::string description) :
 		mName(name), mDescription(description), mCtx(1), mPublisher(mCtx), mDealer(
 				mCtx, mName), mSimTime("SimTime", 1000), mSimTimeStep(
@@ -34,6 +39,18 @@ void SimulationModel::configure(std::string filename) {
 }
 
 bool SimulationModel::prepare() {
+	boost::filesystem::path dir1(BREAKPNTS_PATH);
+	if (!boost::filesystem::exists(dir1)) {
+		boost::filesystem::create_directory(dir1);
+		std::cout << "Create savepoints-directory for SimulationModel" << "\n";
+	}
+
+	boost::filesystem::path dir2(CONFIG_DIR);
+	if (!boost::filesystem::exists(dir2)) {
+		boost::filesystem::create_directory(dir2);
+		std::cout << "Create config-directory for SimulationModel" << "\n";
+	}
+
 	mTotalNumOfModels = mDealer.getTotalNumberOfModels();
 	mNumOfPersistModels = mDealer.getNumberOfPersistModels();
 
@@ -59,7 +76,7 @@ bool SimulationModel::prepare() {
 void SimulationModel::run() {
 
 	if (mConfigMode) {
-		this->store("../src/simulation_model/configuration/config.xml");
+		this->store(CONFIG_FILE);
 		mRun = false;
 	}
 
@@ -70,10 +87,8 @@ void SimulationModel::run() {
 
 				for (auto breakpoint : getBreakpoints()) {
 					if (currentSimTime == breakpoint) {
-						std::string filename =
-								"../src/simulation_model/savepoints/"
-										+ std::to_string(breakpoint)
-										+ "_savefile_simulation.xml";
+						std::string filename = BREAKPNTS_PATH
+								+ std::to_string(breakpoint) + FILE_EXTENTION;
 
 						this->store(filename);
 						break;
