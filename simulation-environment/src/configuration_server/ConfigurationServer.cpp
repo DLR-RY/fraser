@@ -23,7 +23,7 @@ ConfigurationServer::~ConfigurationServer() {
 
 bool ConfigurationServer::prepare() {
 	boost::property_tree::ptree pt;
-	boost::property_tree::read_xml("../src/configuration_server/configuration/config.xml", pt);
+	boost::property_tree::read_xml("../src/configuration_server/configuration/models-config.xml", pt);
 
 	for (auto& child : pt.get_child("Configuration.Models")) {
 		const boost::property_tree::ptree& subchild = child.second;
