@@ -1,27 +1,40 @@
 <Configuration>
+	<!-- TODO: XML-Schema should just allow port numbers from x to y -->
 	<Models>
 		<Model persist="true">
 			<Name>simulation_model</Name>
 			<IP>localhost</IP>
 			<Port>5562</Port>
 		</Model>
+		
 		<Model persist="true">
 			<Name>event_queue</Name>
 			<IP>localhost</IP>
 			<Port>5563</Port>
 		</Model>
+		
 		<Model persist="true">
 			<Name>model_1</Name>
 			<IP>localhost</IP>
 			<Port>5564</Port>
+			<dependencies>
+				<item>event_queue</item>
+				<item>model_2</item>
+			</dependencies>
 		</Model>
+		
 		<Model persist="true">
 			<Name>model_2</Name>
 			<IP>localhost</IP>
 			<Port>5565</Port>
+			<dependencies>
+				<item>event_queue</item>
+				<item>model_1</item>
+			</dependencies>
 		</Model>
 	</Models>
-	
+
+	<!-- TODO: Other ports should be excluded (Specify port numbers explicitly) -->
 	<OtherPorts>
 		<FrontendPort>5570</FrontendPort>
 		<SynchronizationPort>5560</SynchronizationPort>
