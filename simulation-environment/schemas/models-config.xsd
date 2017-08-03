@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<xs:schema elementFormDefault="qualified"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Configuration">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Models">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Model" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element type="xs:string" name="Name" />
+
+										<xs:element type="xs:string" name="IP" />
+
+										<xs:element type="xs:int" name="Port" />
+
+										<xs:element name="dependencies" minOccurs="0"
+											maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element type="xs:string" name="item"
+														maxOccurs="unbounded" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+
+									<xs:attribute type="xs:string" name="persist">
+									</xs:attribute>
+
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+				<!-- TODO: Remove these part -->
+				<xs:element name="OtherPorts">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="FrontendPort" type="xs:int" />
+							<xs:element name="SynchronizationPort" type="xs:int" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
