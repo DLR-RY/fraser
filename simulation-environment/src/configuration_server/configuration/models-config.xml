@@ -3,12 +3,15 @@
 	xsi:noNamespaceSchemaLocation="../../../schemas/models-config.xsd">
 	<!-- TODO: XML-Schema should just allow port numbers from x to y -->
 	<Hosts>
+		<Localhost>
+			<Name>masterhost</Name>
+		</Localhost>
 		<Host id="1">
-			<Name>master</Name>
+			<Name>host1</Name>
 			<Address>localhost</Address>
 		</Host>
 		<Host id="2">
-			<Name>slave</Name>
+			<Name>host2</Name>
 			<Address>localhost</Address>
 		</Host>
 	</Hosts>

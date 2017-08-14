@@ -8,6 +8,13 @@
 				<xs:element name="Hosts">
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element name="Localhost" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element type="xs:string" name="Name" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
 							<xs:element name="Host" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
