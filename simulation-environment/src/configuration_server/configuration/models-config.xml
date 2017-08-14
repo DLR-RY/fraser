@@ -1,38 +1,45 @@
 <?xml version="1.0"?>
-<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ModelsConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../schemas/models-config.xsd">
 	<!-- TODO: XML-Schema should just allow port numbers from x to y -->
+	<Hosts>
+		<Host id="1">
+			<Name>master</Name>
+			<Address>localhost</Address>
+		</Host>
+		<Host id="2">
+			<Name>slave</Name>
+			<Address>localhost</Address>
+		</Host>
+	</Hosts>
+
 	<Models>
-		<Model persist="true">
+		<Model id="1" persist="true">
 			<Name>simulation_model</Name>
-			<IP>localhost</IP>
-			<Port>5562</Port>
+			<HostRef hostID="2" />
 		</Model>
 
-		<Model persist="true">
+		<Model persist="true" id="2">
 			<Name>event_queue</Name>
-			<IP>localhost</IP>
-			<Port>5563</Port>
+			<HostRef hostID="1" />
 		</Model>
 
-		<Model persist="true">
+		<Model persist="true" id="3">
 			<Name>model_1</Name>
-			<IP>localhost</IP>
-			<Port>5564</Port>
-			<dependencies>
-				<item>event_queue</item>
-				<item>model_2</item>
-			</dependencies>
+			<HostRef hostID="1" />
+			<Dependencies>
+				<ModelRef modelID="2" />
+				<ModelRef modelID="4" />
+			</Dependencies>
 		</Model>
 
-		<Model persist="true">
+		<Model persist="true" id="4">
 			<Name>model_2</Name>
-			<IP>localhost</IP>
-			<Port>5565</Port>
-			<dependencies>
-				<item>event_queue</item>
-				<item>model_1</item>
-			</dependencies>
+			<HostRef hostID="1" />
+			<Dependencies>
+				<ModelRef modelID="2" />
+				<ModelRef modelID="3" />
+			</Dependencies>
 		</Model>
 	</Models>
 	<!-- TODO: Other ports should be excluded (Specify port numbers explicitly) -->
@@ -40,5 +47,5 @@
 		<FrontendPort>5570</FrontendPort>
 		<SynchronizationPort>5560</SynchronizationPort>
 	</OtherPorts>
-</Configuration>
+</ModelsConfiguration>
 

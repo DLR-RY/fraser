@@ -1,9 +1,46 @@
 <?xml version="1.0"?>
 <xs:schema elementFormDefault="qualified"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="Configuration">
+	<xs:element name="ModelsConfiguration">
 		<xs:complexType>
 			<xs:sequence>
+
+				<xs:element name="Hosts">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Host" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element type="xs:string" name="Name" />
+										<xs:element type="xs:string" name="Address" />
+									</xs:sequence>
+									<xs:attribute name="id" type="xs:long" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+
+					<xs:key name="HostKey">
+						<xs:selector xpath="Host" />
+						<xs:field xpath="@id" />
+					</xs:key>
+
+					<xs:keyref name="HostKeyRef" refer="HostKey">
+						<xs:selector xpath="HostRef" />
+						<xs:field xpath="@hostID" />
+					</xs:keyref>
+
+					<xs:key name="ModelKey">
+						<xs:selector xpath="Model" />
+						<xs:field xpath="@id" />
+					</xs:key>
+
+					<xs:keyref name="ModelKeyRef" refer="ModelKey">
+						<xs:selector xpath="ModelRef" />
+						<xs:field xpath="@modelID" />
+					</xs:keyref>
+				</xs:element>
+
 				<xs:element name="Models">
 					<xs:complexType>
 						<xs:sequence>
@@ -11,22 +48,27 @@
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element type="xs:string" name="Name" />
-
-										<xs:element type="xs:string" name="IP" />
-
-										<xs:element type="xs:int" name="Port" />
-
-										<xs:element name="dependencies" minOccurs="0"
+										<xs:element name="HostRef">
+											<xs:complexType>
+												<xs:attribute name="hostID" type="xs:long" use="required" />
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Dependencies" minOccurs="0"
 											maxOccurs="1">
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element type="xs:string" name="item"
-														maxOccurs="unbounded" />
+													<xs:element name="ModelRef" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:attribute name="modelID" type="xs:long"
+																use="required" />
+														</xs:complexType>
+													</xs:element>
 												</xs:sequence>
 											</xs:complexType>
 										</xs:element>
 									</xs:sequence>
 
+									<xs:attribute name="id" type="xs:long" use="required" />
 									<xs:attribute type="xs:string" name="persist">
 									</xs:attribute>
 
@@ -45,7 +87,6 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
