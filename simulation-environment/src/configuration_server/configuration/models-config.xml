@@ -1,25 +1,24 @@
 <?xml version="1.0"?>
 <ModelsConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../schemas/models-config.xsd">
-	<!-- TODO: XML-Schema should just allow port numbers from x to y -->
 	<Hosts>
-		<Localhost>
+		<Localhost id="0">
 			<Name>masterhost</Name>
 		</Localhost>
-		<Host id="1">
+		<Remotehost id="1">
 			<Name>host1</Name>
 			<Address>localhost</Address>
-		</Host>
-		<Host id="2">
+		</Remotehost>
+		<Remotehost id="2">
 			<Name>host2</Name>
 			<Address>localhost</Address>
-		</Host>
+		</Remotehost>
 	</Hosts>
 
 	<Models>
 		<Model id="1" persist="true">
 			<Name>simulation_model</Name>
-			<HostRef hostID="2" />
+			<HostRef hostID="0" />
 		</Model>
 
 		<Model persist="true" id="2">
@@ -45,10 +44,5 @@
 			</Dependencies>
 		</Model>
 	</Models>
-	<!-- TODO: Other ports should be excluded (Specify port numbers explicitly) -->
-	<OtherPorts>
-		<FrontendPort>5570</FrontendPort>
-		<SynchronizationPort>5560</SynchronizationPort>
-	</OtherPorts>
 </ModelsConfiguration>
 

@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 <xs:schema elementFormDefault="qualified"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:complexType name="HostType">
+		<xs:sequence>
+			<xs:element type="xs:string" name="Name" maxOccurs="1" />
+			<xs:element type="xs:string" name="Address" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:long" use="required" />
+	</xs:complexType>
+
 	<xs:element name="ModelsConfiguration">
 		<xs:complexType>
 			<xs:sequence>
@@ -8,27 +17,15 @@
 				<xs:element name="Hosts">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="Localhost" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element type="xs:string" name="Name" />
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="Host" maxOccurs="unbounded">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element type="xs:string" name="Name" />
-										<xs:element type="xs:string" name="Address" />
-									</xs:sequence>
-									<xs:attribute name="id" type="xs:long" use="required" />
-								</xs:complexType>
-							</xs:element>
+							<xs:element name="Localhost" type="HostType"
+								maxOccurs="1" />
+							<xs:element name="Remotehost" type="HostType"
+								maxOccurs="unbounded" />
 						</xs:sequence>
 					</xs:complexType>
 
 					<xs:key name="HostKey">
-						<xs:selector xpath="Host" />
+						<xs:selector xpath="HostType" />
 						<xs:field xpath="@id" />
 					</xs:key>
 
@@ -46,7 +43,9 @@
 						<xs:selector xpath="ModelRef" />
 						<xs:field xpath="@modelID" />
 					</xs:keyref>
+
 				</xs:element>
+
 
 				<xs:element name="Models">
 					<xs:complexType>
@@ -84,17 +83,8 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-
-				<!-- TODO: Remove these part -->
-				<xs:element name="OtherPorts">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="FrontendPort" type="xs:int" />
-							<xs:element name="SynchronizationPort" type="xs:int" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+
 </xs:schema>
