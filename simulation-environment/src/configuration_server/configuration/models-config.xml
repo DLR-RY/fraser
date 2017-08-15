@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<ModelsConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../schemas/models-config.xsd">
-	<Hosts>
+	<Hosts minPort="6000" maxPort="6100">
 		<Localhost id="0">
 			<Name>masterhost</Name>
 		</Localhost>
@@ -18,31 +18,31 @@
 	<Models>
 		<Model id="1" persist="true">
 			<Name>simulation_model</Name>
-			<HostRef hostID="0" />
+			<HostReference hostID="0" />
 		</Model>
 
 		<Model persist="true" id="2">
 			<Name>event_queue</Name>
-			<HostRef hostID="1" />
+			<HostReference hostID="1" />
 		</Model>
 
 		<Model persist="true" id="3">
 			<Name>model_1</Name>
-			<HostRef hostID="1" />
+			<HostReference hostID="1" />
 			<Dependencies>
-				<ModelRef modelID="2" />
-				<ModelRef modelID="4" />
+				<ModelReference modelID="2" />
+				<ModelReference modelID="4" />
 			</Dependencies>
 		</Model>
 
 		<Model persist="true" id="4">
 			<Name>model_2</Name>
-			<HostRef hostID="1" />
+			<HostReference hostID="1" />
 			<Dependencies>
-				<ModelRef modelID="2" />
-				<ModelRef modelID="3" />
+				<ModelReference modelID="2" />
+				<ModelReference modelID="3" />
 			</Dependencies>
 		</Model>
 	</Models>
-</ModelsConfiguration>
+</root>
 
