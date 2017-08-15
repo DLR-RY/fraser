@@ -13,6 +13,21 @@ all:
 	@$(MAKE) -C $(MODEL_1_DIR) -f Makefile
 	@$(MAKE) -C $(MODEL_2_DIR) -f Makefile
 	
+configuration-server:
+	@$(MAKE) -C $(CONFIGURATION_SERVER_DIR) -f Makefile
+	
+simulation-model:
+	@$(MAKE) -C $(SIMULATION_MODEL_DIR) -f Makefile
+	
+event-queue:
+	@$(MAKE) -C $(EVENT_QUEUE_DIR) -f Makefile
+	
+model1:
+	@$(MAKE) -C $(MODEL_1_DIR) -f Makefile
+	
+model2:
+	@$(MAKE) -C $(MODEL_2_DIR) -f Makefile
+	
 clean:
 	@$(MAKE) -C $(CONFIGURATION_SERVER_DIR) -f Makefile clean
 	@$(MAKE) -C $(SIMULATION_MODEL_DIR) -f Makefile clean
