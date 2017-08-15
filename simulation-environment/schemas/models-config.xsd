@@ -5,7 +5,7 @@
 	<xs:complexType name="HostType">
 		<xs:sequence>
 			<xs:element type="xs:string" name="Name" maxOccurs="1" />
-			<xs:element type="xs:string" name="Address" minOccurs="0"/>
+			<xs:element type="xs:string" name="Address" minOccurs="0" />
 		</xs:sequence>
 		<xs:attribute name="id" type="xs:long" use="required" />
 	</xs:complexType>
@@ -35,7 +35,7 @@
 					</xs:keyref>
 
 					<xs:key name="ModelKey">
-						<xs:selector xpath="Model" />
+						<xs:selector xpath="Models/Model" />
 						<xs:field xpath="@id" />
 					</xs:key>
 
