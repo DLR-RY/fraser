@@ -45,6 +45,9 @@ public:
 	std::vector<std::string> getModelNames();
 	std::string getHostAddressFromModel(std::string modelName);
 
+	// Get informations from xml-file
+	void setMinAndMaxPort();
+
 private:
 	// IModel
 	std::string mName;
@@ -56,6 +59,8 @@ private:
 	pugi::xml_node mRootNode;
 
 	bool mRun = true;
+	std::string mMinPort = "";
+	std::string mMaxPort = "";
 };
 
 #endif /* CONFIGURATION_SERVER_CONFIGURATIONSERVER_H_ */

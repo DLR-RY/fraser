@@ -28,31 +28,41 @@ bool ConfigurationServer::prepare() {
 		std::cout << "Error: " << result.description() << std::endl;
 		return false;
 	} else {
-
 		mRootNode = doc.root();
 		return true;
 	}
 }
 
-int ConfigurationServer::getNumberOfModels() {
-	std::string allModelsSearch = "ModelsConfiguration/Models/Model";
-	auto xpathAllModels = mRootNode.select_nodes(allModelsSearch.c_str());
+void ConfigurationServer::setMinAndMaxPort() {
+	pugi::xpath_node xpathHosts = mRootNode.select_single_node("//Hosts");
+	mMinPort = xpathHosts.node().attribute("minPort").value();
+	mMaxPort = xpathHosts.node().attribute("maxPort").value();
 
+	std::cout << "min. port: " << mMinPort << std::endl;
+	std::cout << "max. port: " << mMaxPort << std::endl;
+}
+
+int ConfigurationServer::getNumberOfModels() {
+	std::string allModelsSearch = "//Models/Model";
+	pugi::xpath_node_set xpathAllModels = mRootNode.select_nodes(
+			allModelsSearch.c_str());
+
+	std::cout << "Nr of models: " << xpathAllModels.size() << std::endl;
 	return xpathAllModels.size();
 }
 
 int ConfigurationServer::getNumberOfPersistModels() {
-	std::string allModelsSearch =
-			"ModelsConfiguration/Models/Model[@persist=true]";
+	std::string allModelsSearch = "//Models/Model[@persist='true']";
 	auto xpathAllModels = mRootNode.select_nodes(allModelsSearch.c_str());
 
+	std::cout << "Nr of persist models: " << xpathAllModels.size() << std::endl;
 	return xpathAllModels.size();
 }
 
 std::vector<std::string> ConfigurationServer::getModelNames() {
 	std::vector<std::string> modelNames;
 
-	std::string allModelsSearch = "ModelsConfiguration/Models/Model";
+	std::string allModelsSearch = "//Models/Model";
 	pugi::xpath_node_set xpathAllModels = mRootNode.select_nodes(
 			allModelsSearch.c_str());
 
@@ -69,26 +79,30 @@ std::vector<std::string> ConfigurationServer::getModelNames() {
 
 std::string ConfigurationServer::getHostAddressFromModel(
 		std::string modelName) {
+
+	std::string hostAddress = "";
 	// Search for the first matching entry with the given hint attribute
-	std::string specificModelSearch = "ModelsConfiguration/Models/Model"; // TODO: Look for a Name
+	std::string specificModelSearch = "//Models/Model[./Name='" + modelName + "']"; // TODO: Look for a Name
 
 	pugi::xpath_node xpathSpecificModel = mRootNode.select_single_node(
 			specificModelSearch.c_str());
 
 	if (xpathSpecificModel) {
-
 		std::string hostID =
-				xpathSpecificModel.node().child("HostRef").attribute("hostID").value();
+				xpathSpecificModel.node().child("HostReference").attribute(
+						"hostID").value();
 
-		std::string hostNameSearch = "ModelsConfiguration/Hosts/*[@id=" + hostID
-				+ "]/Name";
+		std::string hostNameSearch = "//Hosts/*[@id=" + hostID + "]/Name";
 
 		pugi::xpath_node xpath_hostName = mRootNode.select_single_node(
 				hostNameSearch.c_str());
 
-		std::cout << "HostName: " << xpath_hostName.node().text().get()
-				<< std::endl;
+		hostAddress = xpath_hostName.node().text().get();
 	}
+
+	std::cout << "host address of "+modelName+": " << hostAddress << std::endl;
+
+	return hostAddress;
 }
 
 void ConfigurationServer::run() {
