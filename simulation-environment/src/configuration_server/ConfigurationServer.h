@@ -17,6 +17,8 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "interfaces/IModel.h"
+#include <pugixml.hpp>
+#include <string>
 
 //  This is our external configuration server, which deals with requests and sends the requested IP or Port back to the client.
 //  The server can handle one request at time.
@@ -37,20 +39,23 @@ public:
 		return mDescription;
 	}
 
+	// Request Methods
+	int getNumberOfModels();
+	int getNumberOfPersistModels();
+	std::vector<std::string> getModelNames();
+	std::string getHostAddressFromModel(std::string modelName);
+
 private:
 	// IModel
 	std::string mName;
 	std::string mDescription;
 
-	std::map<std::string, std::string> mHostInfos;
-
 	zmq::context_t mCtx;
 	zmq::socket_t mFrontend;
 
-	std::string mFrontendPort;
-	std::vector<std::string> mModelNames;
-	int mNumOfModels;
-	int mNumOfPersistModels;
+	pugi::xml_node mRootNode;
+
+	bool mRun = true;
 };
 
 #endif /* CONFIGURATION_SERVER_CONFIGURATIONSERVER_H_ */
