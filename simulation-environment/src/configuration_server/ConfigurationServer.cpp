@@ -20,10 +20,6 @@ ConfigurationServer::ConfigurationServer() :
 		mModelNames = getModelNames();
 		setMinAndMaxPort();
 		setModelPortNumbers();
-		std::cout << "Numer of Models:" << this->getNumberOfModels()
-				<< std::endl;
-		std::cout << "Numer of persist Models:"
-				<< this->getNumberOfPersistModels() << std::endl;
 		setModelIPAddresses();
 
 		try {
@@ -93,7 +89,7 @@ void ConfigurationServer::setModelIPAddresses() {
 		std::string hostAddress = "";
 		// Search for the first matching entry with the given hint attribute
 		std::string specificModelSearch = ".//Models/Model[./Name='" + name
-				+ "']"; // TODO: Look for a Name
+				+ "']";
 
 		pugi::xpath_node xpathSpecificModel = mRootNode.select_single_node(
 				specificModelSearch.c_str());
