@@ -7,12 +7,38 @@
 
 #include "ConfigurationServer.h"
 
+#define FRONTEND_PORT std::string("5570")
+
 ConfigurationServer::ConfigurationServer() :
 		mCtx(1), mFrontend(mCtx, ZMQ_ROUTER) {
 	std::cout << "ConfigurationServer-Model Constructor" << std::endl;
-	registerInterruptSignal();
 
+	registerInterruptSignal();
 	mRun = this->prepare();
+
+	if (mRun) {
+		mModelNames = getModelNames();
+		setMinAndMaxPort();
+		setModelPortNumbers();
+		std::cout << "Numer of Models:" << this->getNumberOfModels()
+				<< std::endl;
+		std::cout << "Numer of persist Models:"
+				<< this->getNumberOfPersistModels() << std::endl;
+		setModelIPAddresses();
+
+		try {
+			mFrontend.bind("tcp://*:" + FRONTEND_PORT);
+		} catch (std::exception &e) {
+			std::cout << "Could not bind to frontend port of configuration server: "
+			<< e.what() << std::endl;
+			mRun = false;
+		}
+
+	} else {
+		std::cout << "Error: Exit configuration model (Something went wrong)"
+		<< std::endl;
+	}
+
 }
 
 ConfigurationServer::~ConfigurationServer() {
@@ -20,49 +46,101 @@ ConfigurationServer::~ConfigurationServer() {
 }
 
 bool ConfigurationServer::prepare() {
-	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(
-			"./src/configuration_server/configuration/models-config.xml");
+	pugi::xml_parse_result result = mDocument.load_file(
+			"../src/configuration_server/configuration/models-config.xml");
 
 	if (!result) {
-		std::cout << "Error: " << result.description() << std::endl;
+		std::cout << "Parse error: " << result.description()
+				<< ", character pos= " << result.offset;
 		return false;
 	} else {
-		mRootNode = doc.root();
+		mRootNode = mDocument.document_element();
 		return true;
 	}
 }
 
 void ConfigurationServer::setMinAndMaxPort() {
-	pugi::xpath_node xpathHosts = mRootNode.select_single_node("//Hosts");
-	mMinPort = xpathHosts.node().attribute("minPort").value();
-	mMaxPort = xpathHosts.node().attribute("maxPort").value();
+	mMinPort = mRootNode.child("Hosts").attribute("minPort").as_int();
+	mMaxPort = mRootNode.child("Hosts").attribute("maxPort").as_int();
 
-	std::cout << "min. port: " << mMinPort << std::endl;
-	std::cout << "max. port: " << mMaxPort << std::endl;
+	std::cout << "minPort: " << mMinPort << std::endl;
+	std::cout << "maxPort: " << mMaxPort << std::endl;
+}
+
+bool ConfigurationServer::setModelPortNumbers() {
+	int portCnt = mMinPort;
+
+	for (auto name : mModelNames) {
+		if (portCnt > mMaxPort) {
+			std::cout << "Error: Exceeded max. port number (" << mMaxPort
+					<< ") --> Increase the interval" << std::endl;
+			return false;
+		}
+
+		mModelInformation[name + "_port"] = std::to_string(portCnt);
+		portCnt++;
+	}
+
+	mModelInformation["sim_sync_port"] = std::to_string(portCnt);
+
+	return true;
+}
+
+void ConfigurationServer::setModelIPAddresses() {
+
+	for (auto name : mModelNames) {
+
+		std::string hostAddress = "";
+		// Search for the first matching entry with the given hint attribute
+		std::string specificModelSearch = ".//Models/Model[./Name='" + name
+				+ "']"; // TODO: Look for a Name
+
+		pugi::xpath_node xpathSpecificModel = mRootNode.select_single_node(
+				specificModelSearch.c_str());
+
+		if (xpathSpecificModel) {
+			std::string hostID = xpathSpecificModel.node().child(
+					"HostReference").attribute("hostID").value();
+
+			std::string hostNameSearch = ".//Hosts/*[@id=" + hostID + "]/Name";
+
+			pugi::xpath_node xpath_hostName = mRootNode.select_single_node(
+					hostNameSearch.c_str());
+
+			hostAddress = xpath_hostName.node().text().get();
+			mModelInformation[name + "_ip"] = hostAddress;
+		}
+
+		std::cout << "host address of " + name + ": " << hostAddress
+				<< std::endl;
+	}
+
 }
 
 int ConfigurationServer::getNumberOfModels() {
-	std::string allModelsSearch = "//Models/Model";
+	std::string allModelsSearch = ".//Models/Model";
 	pugi::xpath_node_set xpathAllModels = mRootNode.select_nodes(
 			allModelsSearch.c_str());
 
-	std::cout << "Nr of models: " << xpathAllModels.size() << std::endl;
 	return xpathAllModels.size();
 }
 
+std::string ConfigurationServer::getModelInformation(std::string request) {
+	return mModelInformation[request];
+}
+
 int ConfigurationServer::getNumberOfPersistModels() {
-	std::string allModelsSearch = "//Models/Model[@persist='true']";
+	std::string allModelsSearch = ".//Models/Model[@persist='true']";
 	auto xpathAllModels = mRootNode.select_nodes(allModelsSearch.c_str());
 
-	std::cout << "Nr of persist models: " << xpathAllModels.size() << std::endl;
 	return xpathAllModels.size();
 }
 
 std::vector<std::string> ConfigurationServer::getModelNames() {
 	std::vector<std::string> modelNames;
 
-	std::string allModelsSearch = "//Models/Model";
+	std::string allModelsSearch = ".//Models/Model";
+
 	pugi::xpath_node_set xpathAllModels = mRootNode.select_nodes(
 			allModelsSearch.c_str());
 
@@ -73,36 +151,7 @@ std::vector<std::string> ConfigurationServer::getModelNames() {
 					<< modelNode.node().child("Name").text().get() << std::endl;
 		}
 	}
-
 	return modelNames;
-}
-
-std::string ConfigurationServer::getHostAddressFromModel(
-		std::string modelName) {
-
-	std::string hostAddress = "";
-	// Search for the first matching entry with the given hint attribute
-	std::string specificModelSearch = "//Models/Model[./Name='" + modelName + "']"; // TODO: Look for a Name
-
-	pugi::xpath_node xpathSpecificModel = mRootNode.select_single_node(
-			specificModelSearch.c_str());
-
-	if (xpathSpecificModel) {
-		std::string hostID =
-				xpathSpecificModel.node().child("HostReference").attribute(
-						"hostID").value();
-
-		std::string hostNameSearch = "//Hosts/*[@id=" + hostID + "]/Name";
-
-		pugi::xpath_node xpath_hostName = mRootNode.select_single_node(
-				hostNameSearch.c_str());
-
-		hostAddress = xpath_hostName.node().text().get();
-	}
-
-	std::cout << "host address of "+modelName+": " << hostAddress << std::endl;
-
-	return hostAddress;
 }
 
 void ConfigurationServer::run() {
@@ -126,7 +175,7 @@ void ConfigurationServer::run() {
 		} else if (msg == "all_model_names") {
 			v_send(mFrontend, getModelNames());
 		} else {
-			s_send(mFrontend, getHostAddressFromModel(msg));
+			s_send(mFrontend, getModelInformation(msg));
 		}
 
 		if (interruptOccured) {

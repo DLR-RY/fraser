@@ -40,7 +40,7 @@ std::string Dealer::getIPFrom(std::string modelName) {
 	s_send(mReqSocket, request);
 
 	std::string ip = s_recv(mReqSocket);
-	//std::cout << "IP: " << ip << std::endl;
+	std::cout << "IP: " << ip << std::endl;
 	return ip;
 }
 
@@ -48,7 +48,7 @@ std::string Dealer::getPortNumFrom(std::string modelName) {
 	std::string request = modelName + "_port";
 	s_send(mReqSocket, request);
 	std::string port = s_recv(mReqSocket);
-	//std::cout << "Port: " << port << std::endl;
+	std::cout << "Port: " << port << std::endl;
 	return port;
 }
 
@@ -56,7 +56,7 @@ std::string Dealer::getSynchronizationPort() {
 	std::string request = "sim_sync_port";
 	s_send(mReqSocket, request);
 	std::string port = s_recv(mReqSocket);
-	//std::cout << "Port: " << port << std::endl;
+	std::cout << "Port: " << port << std::endl;
 	return port;
 }
 
@@ -75,7 +75,7 @@ int Dealer::getTotalNumberOfModels() {
 	std::string request = "total_num_models";
 	s_send(mReqSocket, request);
 	std::string num = s_recv(mReqSocket);
-	//std::cout << num << std::endl;
+	std::cout << num << std::endl;
 	return std::stoi(num);
 }
 
@@ -83,6 +83,6 @@ int Dealer::getNumberOfPersistModels() {
 	std::string request = "num_persist_models";
 	s_send(mReqSocket, request);
 	std::string num = s_recv(mReqSocket);
-	//std::cout << num << std::endl;
+	std::cout << num << std::endl;
 	return std::stoi(num);
 }

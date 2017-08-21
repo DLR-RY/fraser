@@ -13,9 +13,6 @@
 #include <zmq.hpp>
 
 #include "helper_classes/zhelpers.hpp"
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
 #include "interfaces/IModel.h"
 #include <pugixml.hpp>
 #include <string>
@@ -29,7 +26,8 @@ public:
 	virtual ~ConfigurationServer();
 
 	// IModel
-	virtual void configure(std::string /*filename*/) override {}
+	virtual void configure(std::string /*filename*/) override {
+	}
 	virtual bool prepare() override;
 	virtual void run() override;
 	virtual std::string getName() const override {
@@ -43,10 +41,16 @@ public:
 	int getNumberOfModels();
 	int getNumberOfPersistModels();
 	std::vector<std::string> getModelNames();
-	std::string getHostAddressFromModel(std::string modelName);
+	std::string getModelInformation(std::string request);
 
 	// Get informations from xml-file
 	void setMinAndMaxPort();
+
+	// Set Port numbers
+	bool setModelPortNumbers();
+
+	// Set IP addresses
+	void setModelIPAddresses();
 
 private:
 	// IModel
@@ -57,10 +61,14 @@ private:
 	zmq::socket_t mFrontend;
 
 	pugi::xml_node mRootNode;
+	pugi::xml_document mDocument;
 
 	bool mRun = true;
-	std::string mMinPort = "";
-	std::string mMaxPort = "";
+	int mMinPort = 0;
+	int mMaxPort = 0;
+
+	std::vector<std::string> mModelNames;
+	std::map<std::string, std::string> mModelInformation;
 };
 
 #endif /* CONFIGURATION_SERVER_CONFIGURATIONSERVER_H_ */

@@ -23,7 +23,7 @@
 
 		<Model persist="true" id="2">
 			<Name>event_queue</Name>
-			<HostReference hostID="1" />
+			<HostReference hostID="2" />
 		</Model>
 
 		<Model persist="true" id="3">
