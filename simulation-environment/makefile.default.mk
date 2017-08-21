@@ -6,10 +6,10 @@ OBJDIR ?=
 CC=gcc
 CXX=g++
 RM=rm -f
-INCLUDES = -I/home/user/libzmq/include -I../../ -I../
+INCLUDES = -I/home/user/libzmq/include -I../../ -I../ -I/usr/local/include
 CXXFLAGS := -std=c++1y -g -Wall ${INCLUDES}
 LDFLAGS = -L/usr/local/lib -L/usr/lib/x86_64-linux-gnu 
-LIBS= -lzmq -lboost_serialization -lboost_system -lboost_filesystem -lboost_thread 
+LIBS= -lzmq -lboost_serialization -lboost_system -lboost_filesystem -lboost_thread -lpugixml
 
 vpath %.cpp $(dir $(SRCS))
 

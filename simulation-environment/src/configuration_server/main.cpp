@@ -11,9 +11,9 @@
 //  waits for the server to finish.
 
 int main(void) {
-	ConfigurationServer dns;
+	ConfigurationServer configServerModel;
 	try {
-		dns.run();
+		configServerModel.run();
 
 	} catch (zmq::error_t& e) {
 		std::cout << "ConfigurationServer: Interrupt received: Exit"

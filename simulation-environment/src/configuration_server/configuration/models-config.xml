@@ -1,44 +1,49 @@
 <?xml version="1.0"?>
-<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../schemas/models-config.xsd">
-	<!-- TODO: XML-Schema should just allow port numbers from x to y -->
+	<Hosts minPort="6000" maxPort="6100">
+		<Host id="0">
+			<Name>masterhost</Name>
+			<Address>localhost</Address>
+		</Host>
+		<Host id="1">
+			<Name>host1</Name>
+			<Address>localhost</Address>
+		</Host>
+		<Host id="2">
+			<Name>host2</Name>
+			<Address>localhost</Address>
+		</Host>
+	</Hosts>
+
 	<Models>
-		<Model persist="true">
+		<Model id="1" persist="true">
 			<Name>simulation_model</Name>
-			<IP>localhost</IP>
-			<Port>5562</Port>
+			<HostReference hostID="0" />
 		</Model>
 
-		<Model persist="true">
+		<Model persist="true" id="2">
 			<Name>event_queue</Name>
-			<IP>localhost</IP>
-			<Port>5563</Port>
+			<HostReference hostID="2" />
 		</Model>
 
-		<Model persist="true">
+		<Model persist="true" id="3">
 			<Name>model_1</Name>
-			<IP>localhost</IP>
-			<Port>5564</Port>
-			<dependencies>
-				<item>event_queue</item>
-				<item>model_2</item>
-			</dependencies>
+			<HostReference hostID="1" />
+			<Dependencies>
+				<ModelReference modelID="2" />
+				<ModelReference modelID="4" />
+			</Dependencies>
 		</Model>
 
-		<Model persist="true">
+		<Model persist="true" id="4">
 			<Name>model_2</Name>
-			<IP>localhost</IP>
-			<Port>5565</Port>
-			<dependencies>
-				<item>event_queue</item>
-				<item>model_1</item>
-			</dependencies>
+			<HostReference hostID="1" />
+			<Dependencies>
+				<ModelReference modelID="2" />
+				<ModelReference modelID="3" />
+			</Dependencies>
 		</Model>
 	</Models>
-	<!-- TODO: Other ports should be excluded (Specify port numbers explicitly) -->
-	<OtherPorts>
-		<FrontendPort>5570</FrontendPort>
-		<SynchronizationPort>5560</SynchronizationPort>
-	</OtherPorts>
-</Configuration>
+</root>
 
