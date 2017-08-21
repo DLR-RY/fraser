@@ -11,7 +11,7 @@
 #include <iostream>
 #include <zmq.hpp>
 
-#include "helper_classes/zhelpers.hpp"
+#include "zhelpers.hpp"
 
 class Dealer {
 public:

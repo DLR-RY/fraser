@@ -14,8 +14,8 @@
 #include <iostream>
 #include <memory>
 
-#include "helper_classes/zhelpers.hpp"
-#include "data_types/Event.h"
+#include "data-types/Event.h"
+#include "zhelpers.hpp"
 
 class Publisher {
 public:

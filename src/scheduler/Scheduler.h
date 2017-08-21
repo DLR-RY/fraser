@@ -11,8 +11,8 @@
 #include <vector>
 #include <algorithm>
 
-#include "data_types/Event.h"
-#include "data_types/EventSet.h"
+#include "data-types/Event.h"
+#include "data-types/EventSet.h"
 
 
 class Scheduler {
