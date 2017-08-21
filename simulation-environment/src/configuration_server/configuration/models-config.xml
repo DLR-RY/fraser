@@ -2,17 +2,18 @@
 <root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../schemas/models-config.xsd">
 	<Hosts minPort="6000" maxPort="6100">
-		<Localhost id="0">
+		<Host id="0">
 			<Name>masterhost</Name>
-		</Localhost>
-		<Remotehost id="1">
+			<Address>localhost</Address>
+		</Host>
+		<Host id="1">
 			<Name>host1</Name>
 			<Address>localhost</Address>
-		</Remotehost>
-		<Remotehost id="2">
+		</Host>
+		<Host id="2">
 			<Name>host2</Name>
 			<Address>localhost</Address>
-		</Remotehost>
+		</Host>
 	</Hosts>
 
 	<Models>

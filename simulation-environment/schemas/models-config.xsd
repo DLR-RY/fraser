@@ -8,23 +8,11 @@
 				<xs:element name="Hosts">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="Localhost" maxOccurs="1">
+							<xs:element name="Host" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element type="xs:string" name="Name" maxOccurs="1" />
-										<xs:element type="xs:string" name="Address"
-											minOccurs="0" />
-									</xs:sequence>
-									<xs:attribute name="id" type="xs:long" use="required" />
-								</xs:complexType>
-							</xs:element>
-							
-							<xs:element name="Remotehost" maxOccurs="unbounded">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element type="xs:string" name="Name" maxOccurs="1" />
-										<xs:element type="xs:string" name="Address"
-											minOccurs="0" />
+										<xs:element type="xs:string" name="Address" maxOccurs="1" />
 									</xs:sequence>
 									<xs:attribute name="id" type="xs:long" use="required" />
 								</xs:complexType>
@@ -74,11 +62,11 @@
 		</xs:complexType>
 
 		<xs:key name="HostKey">
-			<xs:selector xpath="./Hosts/Remotehost|./Hosts/Localhost" />
+			<xs:selector xpath="./Hosts/Host" />
 			<xs:field xpath="@id" />
 		</xs:key>
 
-		<xs:keyref name="LocalhostKeyRef" refer="HostKey">
+		<xs:keyref name="HostKeyRef" refer="HostKey">
 			<xs:selector xpath="./Models/Model/HostReference" />
 			<xs:field xpath="@hostID" />
 		</xs:keyref>
