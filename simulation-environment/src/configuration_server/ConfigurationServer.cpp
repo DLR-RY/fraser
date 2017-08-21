@@ -98,7 +98,7 @@ void ConfigurationServer::setModelIPAddresses() {
 			std::string hostID = xpathSpecificModel.node().child(
 					"HostReference").attribute("hostID").value();
 
-			std::string hostNameSearch = ".//Hosts/*[@id=" + hostID + "]/Name";
+			std::string hostNameSearch = ".//Hosts/*[@id=" + hostID + "]/Address";
 
 			pugi::xpath_node xpath_hostName = mRootNode.select_single_node(
 					hostNameSearch.c_str());
