@@ -16,18 +16,19 @@ class InventoryWriter():
         pass
 
     def write_hosts_to_ini(self, root):
+        self.config["all"] = {}
         
-        self.config['MASTER'] = {}
-        for host in root.iter('Localhost'):
-            localhostname = host.find("Name").text
-            self.config['MASTER']["{0} {1}".format(localhostname, 'ansible_host=localhost')] = None 
-           
-        self.config["SLAVES"] = {}
         for host in root.iter('Host'):
             hostname = host.find("Name").text
             hostaddress = host.find("Address").text
-        
-            self.config["SLAVES"]["{0} {1}".format(hostname,"ansible_host={0}".format(hostaddress))] = None
+            
+            models = []
+            for model in root.iter('Model'):
+                hostreference = model.find("HostReference").get("hostID")
+                if(hostreference == host.get('id')):
+                    models.append("{0}".format(model.find("Name").text))
+    
+            self.config["all"]["{0} ansible_host={1} models='{2}'".format(hostname, hostaddress, '["{0}"]'.format('", "'.join(models)))] = None
 
     def get_configuration(self):
         return self.config
