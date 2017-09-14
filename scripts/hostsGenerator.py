@@ -49,7 +49,7 @@ if __name__ == '__main__':
     
     inv_writer.write_hosts_to_ini(root);
     
-    with open("{0}/hosts".format(args.destination), 'w') as configfile:
+    with open("{0}/inventory/hosts".format(args.destination), 'w') as configfile:
         inv_writer.get_configuration().write(configfile)
 
     print("File 'hosts.ini' was created.")
