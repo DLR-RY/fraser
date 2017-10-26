@@ -7,8 +7,6 @@ Created on Aug 14, 2017
 from lxml import etree as ET
 import configparser
 import argparse
-from test.support import args_from_interpreter_flags
-
 
 class InventoryWriter():
     def __init__(self):
