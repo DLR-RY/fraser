@@ -49,7 +49,7 @@ if __name__ == '__main__':
     # Write YAML file
     noalias_dumper = yaml.dumper.SafeDumper
     noalias_dumper.ignore_aliases = lambda self, data: True
-    with open("{0}/roles/initialisation/vars/main.yml".format(args.destination), 'w') as outfile:
+    with open("{0}/inventory/group_vars/all/main.yml".format(args.destination), 'w') as outfile:
         yaml.dump(model_vars_writer.get_model_vars(), outfile, default_flow_style=False, Dumper=noalias_dumper)
 
     print("YAML-file for the model variables was created under 'ansible/roles/initialisation/vars/'.")
