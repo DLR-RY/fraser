@@ -12,7 +12,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/version.hpp>
 
-class BreakpointSet: public std::vector<int> {
+class BreakpointSet: public std::vector<uint64_t> {
 public:
 	BreakpointSet() :
 		mSize(0) {
@@ -29,21 +29,21 @@ private:
 		if (Archive::is_loading::value) {
 			this->clear();
 			ar & boost::serialization::make_nvp("Size", mSize);
-			for (int i = 0; i < mSize; i++) {
-				int breakpoint;
+			for (uint64_t i = 0; i < mSize; i++) {
+				uint64_t breakpoint;
 				ar & boost::serialization::make_nvp("Breakpoint", breakpoint);
 				this->push_back(breakpoint);
 			}
 		} else {
 			mSize = this->size();
 			ar & boost::serialization::make_nvp("Size", mSize);
-			for (int i = 0; i < mSize; i++) {
+			for (uint64_t i = 0; i < mSize; i++) {
 				ar & boost::serialization::make_nvp("Breakpoint", this->at(i));
 			}
 		}
 	}
 
-	int mSize; // You have to add vector size
+	uint64_t mSize; // You have to add vector size
 };
 
 //BOOST_CLASS_VERSION(EventSet, 0);
