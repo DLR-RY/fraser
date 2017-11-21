@@ -40,12 +40,12 @@ bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
 	try {
 		mZMQSyncService.connect("tcp://" + ip + ":" + port);
 	} catch (std::exception &e) {
-		std::cout << "Could not connect to synchronization service: " << e.what()
-				<< std::endl;
+		std::cout << "Could not connect to synchronization service: "
+				<< e.what() << std::endl;
 		return false;
 	}
 
-	this->subscribeTo(Event("Hello"));
+	this->subscribeTo("Hello");
 
 	return true;
 }
@@ -68,20 +68,29 @@ bool Subscriber::synchronizeSub() {
 	return true;
 }
 
-void Subscriber::subscribeTo(Event event) {
+void Subscriber::subscribeTo(std::string eventName) {
 //std::cout << "Subscribe to " << event.getName() << std::endl;
-	mZMQsubscriber.setsockopt(ZMQ_SUBSCRIBE, event.getName().c_str(),
-			event.getName().length());
+	mZMQsubscriber.setsockopt(ZMQ_SUBSCRIBE, eventName.data(),
+			eventName.length());
 }
 
 void Subscriber::receiveEvent() {
 	//  Read envelope with address
-	mEventName = s_recv(mZMQsubscriber);
+	zmq::message_t envelopeName;
+	mZMQsubscriber.recv(&envelopeName);
+	mEventName = std::string(static_cast<char*>(envelopeName.data()),
+			envelopeName.size());
 	//  Read message contents
-	mEvent = b_recv(mZMQsubscriber);
+	zmq::message_t event;
+	mZMQsubscriber.recv(&event);
 
-//	std::cout << mOwner<<" [" << mEventName << "] "
-//			<< mEvent.getTimestampAsString() << std::endl;
+	flatbuffers::FlatBufferBuilder fbb;
+	event::EventBuilder event_builder(fbb);
+
+	mEvent = event::GetEvent(event.data());
+
+	std::cout << mOwner << " [" << mEventName << "] "
+			<< std::to_string(mEvent->timestamp()) << std::endl;
 
 }
 

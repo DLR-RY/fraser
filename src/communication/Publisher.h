@@ -14,7 +14,8 @@
 #include <iostream>
 #include <memory>
 
-#include "data-types/Event.h"
+#include "../../resources/idl/event_generated.h"
+
 #include "zhelpers.hpp"
 
 class Publisher {
@@ -28,9 +29,13 @@ public:
 
 	bool bindSocket(std::string port);
 	bool preparePubSynchronization(std::string port);
-	bool synchronizePub(int expectedSubscribers, int currentSimTime);
+	bool synchronizePub(uint64_t expectedSubscribers, uint64_t currentSimTime);
 
-	void publishEvent(Event event);
+	//void publishEvent(Event event);
+	//template<class T>
+	void publishEvent(std::string name, uint64_t timestamp,
+			event::Priority priority = event::Priority_NORMAL_PRIORITY, uint32_t repeat = 0, uint32_t period = 0,
+			event::EventData dataType = event::EventData_NONE, std::string data = "");
 	void publishEventSet(std::vector<Event> eventSet);
 
 private:

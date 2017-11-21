@@ -5,7 +5,7 @@
  *      Author: Annika Ofenloch
  */
 
-#include "../communication/Publisher.h"
+#include "Publisher.h"
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -55,14 +55,16 @@ bool Publisher::preparePubSynchronization(std::string port) {
 	}
 }
 
-bool Publisher::synchronizePub(int expectedSubscribers, int currentSimTime) {
+bool Publisher::synchronizePub(uint64_t expectedSubscribers,
+		uint64_t currentSimTime) {
 	//  Get synchronization from subscribers
-	int subscribers = 0;
-	int counter = 0;
-	while (subscribers < expectedSubscribers) {
-		this->publishEvent(Event("Hello", currentSimTime));
 
-		for (int i = 0; i < expectedSubscribers; i++) {
+	uint64_t subscribers = 0;
+	uint64_t counter = 0;
+	while (subscribers < expectedSubscribers) {
+		this->publishEvent("Hello", currentSimTime);
+
+		for (uint64_t i = 0; i < expectedSubscribers; i++) {
 			std::string message = s_recv(mZMQSyncService);
 
 			if (message == "OK") {
@@ -85,16 +87,43 @@ bool Publisher::synchronizePub(int expectedSubscribers, int currentSimTime) {
 	return true;
 }
 
-void Publisher::publishEvent(Event event) {
-//	std::cout << "Publish " << event.getName() << " with simTime = "
-//			<< event.getTimestamp() << std::endl;
-	s_sendmore(mZMQpublisher, event.getName().c_str());
-	b_send(mZMQpublisher, event);
+//template<class T>
+void Publisher::publishEvent(std::string name, uint64_t timestamp,
+		event::Priority priority, uint32_t repeat, uint32_t period,
+		event::EventData dataType, std::string data) {
+	std::cout << "Publish " << name << " with simTime = "
+			<< std::to_string(timestamp) << std::endl;
+
+	// Envelope
+	zmq::message_t envelopeName(name.size());
+	memcpy(envelopeName.data(), name.data(), name.size());
+	bool rc = mZMQpublisher.send(envelopeName, ZMQ_SNDMORE);
+
+	// Flatbuffer
+	flatbuffers::FlatBufferBuilder fbb;
+	flatbuffers::Offset<void> dataOffset = 0;
+	if (dataType == event::EventData_String) {
+		dataOffset = fbb.CreateString(data).Union();
+	} else if (dataType == event::EventData_NONE) {
+		// Do Nothing
+	} else {
+		// Do Nothing
+	}
+
+	auto eventOffset = event::CreateEvent(fbb, fbb.CreateString(name),
+			timestamp, priority, repeat, period, dataType, dataOffset);
+	fbb.Finish(eventOffset);
+
+	// Event
+	int buffersize = fbb.GetSize();
+	zmq::message_t event(buffersize);
+	memcpy((void *) event.data(), fbb.GetBufferPointer(), buffersize);
+	rc = mZMQpublisher.send(event);
 }
 
 void Publisher::publishEventSet(std::vector<Event> eventSet) {
-	for (auto& event : eventSet) {
-		s_sendmore(mZMQpublisher, event.getName().c_str());
-		b_send(mZMQpublisher, event);
-	}
+//	for (auto& event : eventSet) {
+//		s_sendmore(mZMQpublisher, event.getName().c_str());
+//		fb_send(mZMQpublisher, event);
+//	}
 }

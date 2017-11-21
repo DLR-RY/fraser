@@ -11,8 +11,8 @@
 #include <iostream>
 #include <zmq.hpp>
 
-#include "data-types/Event.h"
 #include "zhelpers.hpp"
+#include "../../resources/idl/event_generated.h"
 
 class Subscriber {
 public:
@@ -28,7 +28,7 @@ public:
 	bool prepareSubSynchronization(std::string ip, std::string port);
 	bool synchronizeSub();
 
-	void subscribeTo(Event event);
+	void subscribeTo(std::string eventName);
 
 	void receiveEvent();
 
@@ -36,7 +36,7 @@ public:
 		return mEventName;
 	}
 
-	Event getEvent() {
+	const event::Event* getEvent() {
 		return mEvent;
 	}
 
@@ -52,7 +52,7 @@ private:
 
 	std::string mOwner;
 	std::string mEventName;
-	Event mEvent;
+	const event::Event* mEvent;
 };
 
 #endif /* SUBSCRIBER_H_ */
