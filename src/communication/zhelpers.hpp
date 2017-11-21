@@ -17,22 +17,8 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include "Event.h"
+#include "../data-types/Event.h"
 
-#include "event_generated.h"
-
-// Receive 0MQ string from socket, deserialize it and convert into flatbuffer-Event
-static inline event::Event fb_recv(zmq::socket_t & socket) {
-	zmq::message_t reply;
-	socket.recv(&reply);
-
-	flatbuffers::FlatBufferBuilder fbb;
-	event::EventBuilder event_builder(fbb);
-
-	auto fb_event = event::GetEvent(reply.data());
-
-	return event;
-}
 
 //  Receive 0MQ string from socket, deserialize it and convert into an Event
 static inline Event b_recv(zmq::socket_t & socket) {
@@ -91,21 +77,6 @@ static inline std::string s_recv(zmq::socket_t & socket) {
 	socket.recv(&message);
 
 	return std::string(static_cast<char*>(message.data()), message.size());
-}
-
-// Serialize flatbuffer-Event, convert it to 0MQ string, and send to socket
-static inline bool fb_send(zmq::socket_t & socket,
-		flatbuffers::Offset<event::Event> eventOffset) {
-	flatbuffers::FlatBufferBuilder fbb;
-	fbb.Finish(eventOffset);
-
-	int buffersize = fbb.GetSize();
-	zmq::message_t request(buffersize);
-	memcpy((void *) request.data(), fbb.GetBufferPointer(), buffersize);
-	bool rc = socket.send(request);
-	std::cout << "Event sent!" << std::endl;
-
-	return (rc);
 }
 
 //  Serialize Event, Convert string to 0MQ string, and send to socket
