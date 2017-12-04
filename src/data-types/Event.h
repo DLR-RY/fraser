@@ -109,7 +109,7 @@ public:
 		mRepeat = repeat;
 	}
 
-	int getTimestamp() const {
+	uint64_t getTimestamp() const {
 		return mTimestamp;
 	}
 
@@ -134,7 +134,7 @@ private:
 	// TODO: Different Data-types should be possible
 	std::vector<uint8_t> mData;
 
-	int mTimestamp;
+	uint64_t mTimestamp;
 	int mPeriod;
 	int mRepeat;
 	Priority mPriority;
