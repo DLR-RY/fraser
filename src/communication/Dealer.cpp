@@ -71,7 +71,7 @@ std::vector<std::string> Dealer::getAllModelNames() {
 	return modelNames;
 }
 
-int Dealer::getTotalNumberOfModels() {
+uint64_t Dealer::getTotalNumberOfModels() {
 	std::string request = "total_num_models";
 	s_send(mReqSocket, request);
 	std::string num = s_recv(mReqSocket);
@@ -79,7 +79,7 @@ int Dealer::getTotalNumberOfModels() {
 	return std::stoi(num);
 }
 
-int Dealer::getNumberOfPersistModels() {
+uint64_t Dealer::getNumberOfPersistModels() {
 	std::string request = "num_persist_models";
 	s_send(mReqSocket, request);
 	std::string num = s_recv(mReqSocket);

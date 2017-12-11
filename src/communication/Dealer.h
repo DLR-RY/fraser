@@ -22,8 +22,8 @@ public:
 	std::string getPortNumFrom(std::string modelName);
 	std::string getSynchronizationPort();
 	std::vector<std::string> getAllModelNames();
-	int getTotalNumberOfModels();
-	int getNumberOfPersistModels();
+	uint64_t getTotalNumberOfModels();
+	uint64_t getNumberOfPersistModels();
 	void stopDNSserver();
 
 private:
