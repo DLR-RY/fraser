@@ -22,26 +22,25 @@ protected:
 	 * Initialize the parameters with the values of the configuration-file. **/
 	virtual void configure(std::string filename) = 0;
 
-	/** Prepare the subscriber and publisher as well as the synchronization.
-	 * Prepare-method has to be called before the run-method. Every Model
-	 * has to be connected to the simulation-Model for the synchronization and
-	 * to receive the End-event to stop the model.
-	 * In Addition, set the owner of the Subscriber by passing the model-name.
-	 * Configure-method has to be called before the prepare-method.
-	 * Return false if something went wrong. **/
+	/** Prepare the SUBSCRIBER, PUBLISHER and SYNC sockets.
+	 * This method must be called before the run-method.
+	 * All models must be connected to the simulation model during the preparation
+	 * (for the synchronization & configuration, receiving the simulation time and terminating the model).
+	 * In addition, the owner of the subscriber has to be specified by passing the model name.
+	 * Returns FALSE if something went wrong. **/
 	virtual bool prepare() = 0;
 
-	/** Run the model and start to receive events from the publisher. **/
+	/** Run the model and start receiving events from the publisher. **/
 	virtual void run() = 0;
 
-	/** Get name of the model **/
+	/** Get the model name. **/
 	virtual std::string getName() const = 0;
 
-	/** Get Description of the model **/
+	/** Get the model description. **/
 	virtual std::string getDescription() const = 0;
 
 	/** Check if events from different simulation cycles are present. **/
-	bool foundCriticalSimCycle(int currentSimTime) {
+	bool foundCriticalSimCycle(uint64_t currentSimTime) {
 
 		if (mCurrentSimCycle == 0) {
 			mCurrentSimCycle = currentSimTime;
@@ -71,7 +70,7 @@ protected:
 	}
 
 private:
-	int mCurrentSimCycle = 0;
+	uint64_t mCurrentSimCycle = 0;
 };
 
 #endif /* INTERFACES_IMODEL_H_ */
