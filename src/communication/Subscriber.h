@@ -12,7 +12,6 @@
 #include <zmq.hpp>
 
 #include "zhelpers.hpp"
-#include "../../resources/idl/event_generated.h"
 
 class Subscriber {
 public:
@@ -36,8 +35,8 @@ public:
 		return mEventName;
 	}
 
-	const event::Event* getEvent() {
-		return mEvent;
+	void* getEventBuffer() {
+		return mEventBuffer;
 	}
 
 	void setOwnershipName(std::string name) {
@@ -52,7 +51,7 @@ private:
 
 	std::string mOwner;
 	std::string mEventName;
-	const event::Event* mEvent;
+	void* mEventBuffer;
 };
 
 #endif /* SUBSCRIBER_H_ */

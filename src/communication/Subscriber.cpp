@@ -9,7 +9,7 @@
 
 Subscriber::Subscriber(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQsubscriber(mZMQcontext, ZMQ_SUB), mZMQSyncService(
-				mZMQcontext, ZMQ_PUSH), mEvent() {
+				mZMQcontext, ZMQ_PUSH), mEventBuffer(NULL) {
 
 	// "The ZMQ_LINGER option shall set the linger period for the specified socket. The linger period determines how long
 	// pending messages which have yet to be sent to a peer shall linger in memory after a socket is closed"
@@ -53,9 +53,10 @@ bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
 bool Subscriber::synchronizeSub() {
 	// Wait for hello-Event from the publisher
 	while (true) {
-		receiveEvent();
+		mEventName = s_recv(mZMQsubscriber);
+		s_recv(mZMQsubscriber);
+
 		if (mEventName == "Hello") {
-			//std::cout << "Received Hello" << std::endl;
 			s_send(mZMQSyncService, "OK");
 			break;
 		}
@@ -69,9 +70,9 @@ bool Subscriber::synchronizeSub() {
 }
 
 void Subscriber::subscribeTo(std::string eventName) {
-//std::cout << "Subscribe to " << event.getName() << std::endl;
+	std::cout << "Subscribe to " << eventName << std::endl;
 	mZMQsubscriber.setsockopt(ZMQ_SUBSCRIBE, eventName.data(),
-			eventName.length());
+			eventName.size());
 }
 
 void Subscriber::receiveEvent() {
@@ -84,13 +85,6 @@ void Subscriber::receiveEvent() {
 	zmq::message_t event;
 	mZMQsubscriber.recv(&event);
 
-	flatbuffers::FlatBufferBuilder fbb;
-	event::EventBuilder event_builder(fbb);
-
-	mEvent = event::GetEvent(event.data());
-
-	std::cout << mOwner << " [" << mEventName << "] "
-			<< std::to_string(mEvent->timestamp()) << std::endl;
-
+	mEventBuffer = event.data();
 }
 
