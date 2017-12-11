@@ -9,12 +9,7 @@
 #define INTERFACES_PUBLISHER_H_
 
 #include <zmq.hpp>
-
 #include <string>
-#include <iostream>
-#include <memory>
-
-#include "../../resources/idl/event_generated.h"
 
 #include "zhelpers.hpp"
 
@@ -31,12 +26,8 @@ public:
 	bool preparePubSynchronization(std::string port);
 	bool synchronizePub(uint64_t expectedSubscribers, uint64_t currentSimTime);
 
-	//void publishEvent(Event event);
-	//template<class T>
-	void publishEvent(std::string name, uint64_t timestamp,
-			event::Priority priority = event::Priority_NORMAL_PRIORITY, uint32_t repeat = 0, uint32_t period = 0,
-			event::EventData dataType = event::EventData_NONE, std::string data = "");
-	void publishEventSet(std::vector<Event> eventSet);
+	// With event data
+	void publishEvent(std::string identifier, uint8_t *bufferPointer, uint32_t size);
 
 private:
 	void preparePublisher();
