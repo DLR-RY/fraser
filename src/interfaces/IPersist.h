@@ -8,8 +8,6 @@
 #ifndef INTERFACES_IPERSIST_H_
 #define INTERFACES_IPERSIST_H_
 
-#include <vector>
-
 class IPersist {
 public:
 	virtual ~IPersist() {
