@@ -12,13 +12,13 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/version.hpp>
 
-class BreakpointSet: public std::vector<uint64_t> {
+class SavepointSet: public std::vector<uint64_t> {
 public:
-	BreakpointSet() :
-		mSize(0) {
+	SavepointSet() :
+			mSize(0) {
 	}
 
-	virtual ~BreakpointSet() {
+	virtual ~SavepointSet() {
 	}
 
 private:
@@ -30,15 +30,15 @@ private:
 			this->clear();
 			ar & boost::serialization::make_nvp("Size", mSize);
 			for (uint64_t i = 0; i < mSize; i++) {
-				uint64_t breakpoint;
-				ar & boost::serialization::make_nvp("Breakpoint", breakpoint);
-				this->push_back(breakpoint);
+				uint64_t savepoint;
+				ar & boost::serialization::make_nvp("Savepoint", savepoint);
+				this->push_back(savepoint);
 			}
 		} else {
 			mSize = this->size();
 			ar & boost::serialization::make_nvp("Size", mSize);
 			for (uint64_t i = 0; i < mSize; i++) {
-				ar & boost::serialization::make_nvp("Breakpoint", this->at(i));
+				ar & boost::serialization::make_nvp("Savepoint", this->at(i));
 			}
 		}
 	}
