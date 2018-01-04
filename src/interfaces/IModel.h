@@ -19,18 +19,17 @@ public:
 
 protected:
 	/** Load the configuration-file and
-	 * Initialize the parameters with the values of the configuration-file. **/
+	 * Initialize the parameters with the values of the configuration-file.
+	 * Set other parameters which are not included in the configuration-file. **/
 	virtual void configure(std::string filename) = 0;
 
 	/** Prepare the SUBSCRIBER, PUBLISHER and SYNC sockets.
 	 * This method must be called before the run-method.
-	 * All models must be connected to the simulation model during the preparation
-	 * (for the synchronization & configuration, receiving the simulation time and terminating the model).
-	 * In addition, the owner of the subscriber has to be specified by passing the model name.
-	 * Returns FALSE if something went wrong. **/
+	 * All models must be connected to the simulation model during the preparation.
+	 * Return FALSE if something went wrong. **/
 	virtual bool prepare() = 0;
 
-	/** Run the model and start receiving events from the publisher. **/
+	/** Run the model and start receiving and handling events from the publisher. **/
 	virtual void run() = 0;
 
 	/** Get the model name. **/

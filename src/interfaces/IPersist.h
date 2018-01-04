@@ -15,10 +15,12 @@ public:
 	virtual ~IPersist() {
 	}
 
-	/** Store all states of the model and save them in a file. **/
-	virtual void store(std::string filename) = 0;
-	/** Restore all states of the model from a specific savepoint (breakpoint). **/
-	virtual void restore(std::string filename) = 0;
+	/** Store state of the model and save them in a XML file. **/
+	virtual void saveState(std::string filename) = 0;
+
+	/** Restore/Load state of the model.
+	 * Is used for configuring and restoring the model. **/
+	virtual void loadState(std::string filename) = 0;
 
 };
 
