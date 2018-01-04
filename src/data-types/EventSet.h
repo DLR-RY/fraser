@@ -12,7 +12,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/version.hpp>
 
-#include "../data-types/Event.h"
+#include "Event.h"
 
 class EventSet: public std::vector<Event> {
 public:
