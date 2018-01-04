@@ -13,10 +13,10 @@ public:
 	virtual ~IPersist() {
 	}
 
-	/** Store state of the model and save them in a XML file. **/
+	/** Save state of the model in a XML file. **/
 	virtual void saveState(std::string filename) = 0;
 
-	/** Restore/Load state of the model.
+	/** Restore/Load state of the model from a XML file.
 	 * Is used for configuring and restoring the model. **/
 	virtual void loadState(std::string filename) = 0;
 
