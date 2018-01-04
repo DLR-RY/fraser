@@ -18,10 +18,8 @@ public:
 	}
 
 protected:
-	/** Load the configuration-file and
-	 * Initialize the parameters with the values of the configuration-file.
-	 * Set other parameters which are not included in the configuration-file. **/
-	virtual void configure(std::string filename) = 0;
+	/** Initialize or calculate other parameters which are not included in the configuration-file. **/
+	virtual void init() = 0;
 
 	/** Prepare the SUBSCRIBER, PUBLISHER and SYNC sockets.
 	 * This method must be called before the run-method.
