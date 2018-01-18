@@ -5,6 +5,12 @@
 	<xs:element name="root">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element name="Configuration">
+					<xs:complexType>
+						<xs:attribute name="path" type="xs:string" use="required" />
+					</xs:complexType>
+				</xs:element>
+			
 				<xs:element name="Hosts">
 					<xs:complexType>
 						<xs:sequence>

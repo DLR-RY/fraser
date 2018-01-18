@@ -15,7 +15,7 @@ class ModelVarsWriter():
 
     def write_vars(self, root, filename):
         model_list = []
-      
+        config_path = ""
         
         for model in root.iter('Model'):
             model_dependencies = []
@@ -27,7 +27,10 @@ class ModelVarsWriter():
             
             model_list.append({'name': model.find('Name').text, 'depends': model_dependencies })
 
-        self.model_vars = {'models': model_list, 'hosts_config_filepath': filename }
+        for config in root.iter('Configuration'):
+            config_path = config.get('path')
+        
+        self.model_vars = {'models': model_list, 'hosts_config_filepath': filename, 'config_path': config_path}
         
     def get_model_vars(self):
         return self.model_vars
