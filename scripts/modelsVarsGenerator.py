@@ -13,7 +13,7 @@ class ModelVarsWriter():
         self.model_vars = {}
         pass
 
-    def write_vars(self, root):
+    def write_vars(self, root, filename):
         model_list = []
       
         
@@ -27,7 +27,7 @@ class ModelVarsWriter():
             
             model_list.append({'name': model.find('Name').text, 'depends': model_dependencies })
 
-        self.model_vars = {'models': model_list }
+        self.model_vars = {'models': model_list, 'hosts_config_filepath': filename }
         
     def get_model_vars(self):
         return self.model_vars
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     tree.parse(filename)
     root = tree.getroot()
     
-    model_vars_writer.write_vars(root)
+    model_vars_writer.write_vars(root, filename)
     # Write YAML file
     noalias_dumper = yaml.dumper.SafeDumper
     noalias_dumper.ignore_aliases = lambda self, data: True
