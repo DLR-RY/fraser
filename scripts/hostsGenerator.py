@@ -1,3 +1,17 @@
+#!/usr/bin/env pythonNone
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2017, German Aerospace Center (DLR)
+#
+# This file is part of the development version of FRASER.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Authors:
+# - 2017, Annika Ofenloch (DLR RY-AVS)
+
 '''
 Created on Aug 14, 2017
 
