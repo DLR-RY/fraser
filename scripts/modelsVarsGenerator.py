@@ -25,15 +25,8 @@ class ModelVarsWriter():
         model_list = []
         config_path = ""
         
-        for model in root.iter('Model'):
-            model_dependencies = []
-            if model.find('Dependencies/ModelReference') is not None:
-                for dependency in model.findall('Dependencies/ModelReference'):
-                    for model_id in root.iter('Model'):
-                        if(model_id.get('id') == dependency.get('modelID')):
-                            model_dependencies.append(model_id.find('Name').text)
-            
-            model_list.append({'name': model.find('Name').text, 'depends': model_dependencies })
+        for model in root.iter('Model'):     
+            model_list.append({'name': model.find('Name').text})
 
         for config in root.iter('Configuration'):
             config_path = config.get('path')
