@@ -12,11 +12,6 @@
 # Authors:
 # - 2017, Annika Ofenloch (DLR RY-AVS)
 
-'''
-Created on Dec 20, 2017
-
-@author: Annika Ofenloch
-'''
 import argparse
 import functools
 

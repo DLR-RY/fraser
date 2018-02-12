@@ -12,12 +12,6 @@
 # Authors:
 # - 2017, Annika Ofenloch (DLR RY-AVS)
 
-'''
-Created on Aug 14, 2017
-
-@author: Annika Ofenloch
-'''
-
 from lxml import etree as ET
 import configparser
 import argparse
