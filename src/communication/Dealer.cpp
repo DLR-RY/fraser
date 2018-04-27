@@ -67,13 +67,10 @@ std::string Dealer::getSynchronizationPort() {
 }
 
 std::vector<std::string> Dealer::getAllModelNames() {
-	std::vector<std::string> modelList;
-
 	std::string request = "all_model_names";
 	s_send(mReqSocket, request);
 
 	std::vector<std::string> modelNames = v_recv(mReqSocket);
-	//std::cout << "IP: " << ip << std::endl;
 	return modelNames;
 }
 
@@ -91,4 +88,12 @@ uint64_t Dealer::getNumberOfPersistModels() {
 	std::string num = s_recv(mReqSocket);
 	std::cout << num << std::endl;
 	return std::stoi(num);
+}
+
+std::vector<std::string> Dealer::getAllModelDependencies(std::string modelName) {
+	std::string request = modelName + "_dependencies";
+	s_send(mReqSocket, request);
+
+	std::vector<std::string> modelDependencies = v_recv(mReqSocket);
+	return modelDependencies;
 }
