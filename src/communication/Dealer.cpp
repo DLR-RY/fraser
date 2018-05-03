@@ -78,7 +78,7 @@ uint64_t Dealer::getTotalNumberOfModels() {
 	std::string request = "total_num_models";
 	s_send(mReqSocket, request);
 	std::string num = s_recv(mReqSocket);
-	std::cout << num << std::endl;
+	//std::cout << num << std::endl;
 	return std::stoi(num);
 }
 
@@ -90,8 +90,8 @@ uint64_t Dealer::getNumberOfPersistModels() {
 	return std::stoi(num);
 }
 
-std::vector<std::string> Dealer::getAllModelDependencies(std::string modelName) {
-	std::string request = modelName + "_dependencies";
+std::vector<std::string> Dealer::getModelDependencies() {
+	std::string request = "model_dependencies";
 	s_send(mReqSocket, request);
 
 	std::vector<std::string> modelDependencies = v_recv(mReqSocket);

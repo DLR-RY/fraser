@@ -31,12 +31,12 @@ class Event {
 public:
 
 	Event() :
-			mName(""), mTimestamp(0), mPeriod(0), mRepeat(0), mPriority(
+			mName(""), mTimestamp(0), mData(0), mPeriod(0), mRepeat(0), mPriority(
 					Priority::NORMAL_PRIORITY) {
 	}
 
 	// Overloaded Constructor
-	Event(std::string name, std::vector<uint8_t> data, int timestamp = -1, int period = 0, int repeat = 0,
+	Event(std::string name, uint32_t data, int timestamp = -1, int period = 0, int repeat = 0,
 			Priority priority = Priority::NORMAL_PRIORITY) :
 			mName(name), mData(data), mTimestamp(timestamp), mPeriod(period), mRepeat(repeat), mPriority(priority) {
 	}
@@ -44,7 +44,7 @@ public:
 	// Overloaded Constructor
 	Event(std::string name, int timestamp = -1, int period = 0, int repeat = 0,
 			Priority priority = Priority::NORMAL_PRIORITY) :
-			mName(name), mTimestamp(timestamp), mPeriod(period), mRepeat(
+			mName(name), mTimestamp(timestamp), mData(0), mPeriod(period), mRepeat(
 					repeat), mPriority(priority) {
 	}
 
@@ -91,7 +91,7 @@ public:
 		mTimestamp = milliseconds;
 	}
 
-	std::vector<uint8_t> getData() {
+	uint32_t getData() {
 		return mData;
 	}
 
@@ -119,7 +119,7 @@ public:
 		return mTimestamp;
 	}
 
-	void set_timestamp(int timestamp) {
+	void setTimestamp(int timestamp) {
 		mTimestamp = timestamp;
 	}
 
@@ -137,10 +137,9 @@ private:
 	}
 
 	std::string mName;
-	// TODO: Different Data-types should be possible
-	std::vector<uint8_t> mData;
-
+	uint32_t mData;
 	uint64_t mTimestamp;
+
 	int mPeriod;
 	int mRepeat;
 	Priority mPriority;

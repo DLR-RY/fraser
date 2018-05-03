@@ -92,5 +92,7 @@ void Subscriber::receiveEvent() {
 	mZMQsubscriber.recv(&event);
 
 	mEventBuffer = event.data();
+
+	std::cout<<mOwner<<" receives Event["<<mEventName<<"] "<<std::endl;
 }
 

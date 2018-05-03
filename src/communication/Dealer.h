@@ -30,7 +30,7 @@ public:
 	std::vector<std::string> getAllModelNames();
 	uint64_t getTotalNumberOfModels();
 	uint64_t getNumberOfPersistModels();
-	std::vector<std::string> getAllModelDependencies(std::string modelName);
+	std::vector<std::string> getModelDependencies();
 	void stopDNSserver();
 
 private:
