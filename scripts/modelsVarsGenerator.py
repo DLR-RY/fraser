@@ -26,7 +26,7 @@ class ModelVarsWriter():
         config_path = ""
         
         for model in root.iter('Model'):     
-            model_list.append({'name': model.find('Name').text})
+            model_list.append(model.find('Name').text)
 
         for config in root.iter('Configuration'):
             config_path = config.get('path')
