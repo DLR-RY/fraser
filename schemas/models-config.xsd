@@ -5,22 +5,16 @@
 	<xs:element name="root">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="Configuration">
-					<xs:complexType>
-						<xs:attribute name="path" type="xs:string" use="required" />
-					</xs:complexType>
-				</xs:element>
-			
 				<xs:element name="Hosts">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="Host" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element type="xs:string" name="Name" maxOccurs="1" />
+										<xs:element type="xs:string" name="Description" maxOccurs="1" />
 										<xs:element type="xs:string" name="Address" maxOccurs="1" />
 									</xs:sequence>
-									<xs:attribute name="id" type="xs:long" use="required" />
+									<xs:attribute name="id" type="xs:string" use="required" />
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
@@ -29,16 +23,16 @@
 					</xs:complexType>
 				</xs:element>
 
-				<xs:element name="Models">
+				<xs:element name="Models">					
 					<xs:complexType>
+						<xs:attribute name="configPath" type="xs:string" use="required" />
 						<xs:sequence>
 							<xs:element name="Model" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element type="xs:string" name="Name" />
 										<xs:element name="HostReference">
 											<xs:complexType>
-												<xs:attribute name="hostID" type="xs:long" use="required" />
+												<xs:attribute name="hostID" type="xs:string" use="required" />
 											</xs:complexType>
 										</xs:element>
 										<xs:element name="Dependencies" minOccurs="0"
@@ -47,7 +41,7 @@
 												<xs:sequence>
 													<xs:element name="ModelReference" maxOccurs="unbounded">
 														<xs:complexType>
-															<xs:attribute name="modelID" type="xs:long"
+															<xs:attribute name="modelID" type="xs:string"
 																use="required" />
 														</xs:complexType>
 													</xs:element>
@@ -56,9 +50,9 @@
 										</xs:element>
 									</xs:sequence>
 
-									<xs:attribute name="id" type="xs:long" use="required" />
-									<xs:attribute type="xs:string" name="persist">
-									</xs:attribute>
+									<xs:attribute name="persist" type="xs:string" />
+									<xs:attribute name="id" type="xs:string" use="required" />
+									<xs:attribute name="path" type="xs:string" user="required" />	
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>

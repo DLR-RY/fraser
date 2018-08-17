@@ -25,14 +25,14 @@ class InventoryWriter():
         self.config["all"] = {}
         
         for host in root.iter('Host'):
-            hostname = host.find("Name").text
+            hostname = host.get("id")
             hostaddress = host.find("Address").text
-            
+
             models = []
             for model in root.iter('Model'):
                 hostreference = model.find("HostReference").get("hostID")
                 if(hostreference == host.get('id')):
-                    models.append("{0}".format(model.find("Name").text))
+                    models.append("{0}".format(model.get("id")))
     
             self.config["all"]["{0} ansible_host={1} models='{2}'".format(hostname, hostaddress, '["{0}"]'.format('", "'.join(models)))] = None
 

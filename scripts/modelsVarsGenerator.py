@@ -25,11 +25,20 @@ class ModelVarsWriter():
         model_list = []
         config_path = ""
         
-        for model in root.iter('Model'):     
-            model_list.append(model.find('Name').text)
-
-        for config in root.iter('Configuration'):
-            config_path = config.get('path')
+        for models in root.iter('Models'):     
+           	config_path = models.get('configPath')
+        listerr = ['router1', 'router2']
+        
+        for model in root.iter('Model'):
+            pathModel = model.get('path')
+            tmpList = []
+            
+            for model2 in root.iter('Model'):
+               if pathModel in model2.get('path'):
+                  tmpList.append(model2.get('id'))
+            
+            if not any(d['path'] == pathModel for d in model_list):
+               model_list.append({'path': pathModel, 'instances': tmpList})
         
         self.model_vars = {'models': model_list, 'hosts_config_filepath': filename, 'config_path': config_path}
         
