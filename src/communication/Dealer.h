@@ -31,6 +31,7 @@ public:
 	uint64_t getTotalNumberOfModels();
 	uint64_t getNumberOfPersistModels();
 	std::vector<std::string> getModelDependencies();
+	std::string getModelParameter(std::string modelName, std::string paramName);
 	void stopDNSserver();
 
 private:

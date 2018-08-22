@@ -50,6 +50,16 @@ std::string Dealer::getIPFrom(std::string modelName) {
 	return ip;
 }
 
+std::string Dealer::getModelParameter(std::string modelName,
+		std::string paramName) {
+	std::string request = modelName + "_" + paramName;
+	s_send(mReqSocket, request);
+
+	std::string paramValue = s_recv(mReqSocket);
+	std::cout << paramName << ": " << paramValue << std::endl;
+	return paramValue;
+}
+
 std::string Dealer::getPortNumFrom(std::string modelName) {
 	std::string request = modelName + "_port";
 	s_send(mReqSocket, request);
@@ -70,7 +80,7 @@ std::vector<std::string> Dealer::getAllModelNames() {
 	std::string request = "all_model_names";
 	s_send(mReqSocket, request);
 
-	std::vector<std::string> modelNames = v_recv(mReqSocket);
+	std::vector < std::string > modelNames = v_recv(mReqSocket);
 	return modelNames;
 }
 
@@ -94,6 +104,6 @@ std::vector<std::string> Dealer::getModelDependencies() {
 	std::string request = "model_dependencies";
 	s_send(mReqSocket, request);
 
-	std::vector<std::string> modelDependencies = v_recv(mReqSocket);
+	std::vector < std::string > modelDependencies = v_recv(mReqSocket);
 	return modelDependencies;
 }
