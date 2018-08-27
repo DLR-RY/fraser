@@ -15,7 +15,7 @@
 
 Subscriber::Subscriber(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQsubscriber(mZMQcontext, ZMQ_SUB), mZMQSyncService(
-				mZMQcontext, ZMQ_PUSH), mEventBuffer(NULL) {
+				mZMQcontext, ZMQ_PUSH), mEventBuffer(nullptr) {
 
 	// "The ZMQ_LINGER option shall set the linger period for the specified socket. The linger period determines how long
 	// pending messages which have yet to be sent to a peer shall linger in memory after a socket is closed"
@@ -81,18 +81,30 @@ void Subscriber::subscribeTo(std::string eventName) {
 			eventName.size());
 }
 
-void Subscriber::receiveEvent() {
+bool Subscriber::receiveEvent(bool noBlock) {
 	//  Read envelope with address
 	zmq::message_t envelopeName;
 	mZMQsubscriber.recv(&envelopeName);
 	mEventName = std::string(static_cast<char*>(envelopeName.data()),
 			envelopeName.size());
+
 	//  Read message contents
 	zmq::message_t event;
-	mZMQsubscriber.recv(&event);
+	bool receivedEvent = false;
 
-	mEventBuffer = event.data();
+	if (noBlock) {
+		receivedEvent = mZMQsubscriber.recv(&event, ZMQ_DONTWAIT);
+	} else {
+		receivedEvent = mZMQsubscriber.recv(&event);
+	}
 
-	std::cout<<mOwner<<" receives Event["<<mEventName<<"] "<<std::endl;
+	if (receivedEvent) {
+		mEventBuffer = event.data();
+	} else {
+		mEventBuffer = nullptr;
+	}
+
+//	std::cout<<mOwner<<" receives Event["<<mEventName<<"] "<<std::endl;
+	return receivedEvent;
 }
 

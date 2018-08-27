@@ -108,5 +108,5 @@ void Publisher::publishEvent(std::string identifier, uint8_t *bufferPointer,
 	memcpy((void *) event.data(), bufferPointer, size);
 	mZMQpublisher.send(event);
 
-	std::cout<<"publish "<<identifier<<std::endl;
+	//std::cout<<"publish "<<identifier<<std::endl;
 }

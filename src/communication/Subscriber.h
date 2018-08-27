@@ -35,7 +35,7 @@ public:
 
 	void subscribeTo(std::string eventName);
 
-	void receiveEvent();
+	bool receiveEvent(bool noBlock = false);
 
 	std::string getEventName() {
 		return mEventName;
@@ -49,7 +49,6 @@ public:
 		mOwner = name;
 	}
 
-	//virtual void handleEvent() = 0;
 private:
 	zmq::context_t &mZMQcontext;
 	zmq::socket_t mZMQsubscriber;
