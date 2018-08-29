@@ -31,7 +31,8 @@ Publisher::~Publisher() {
 void Publisher::preparePublisher() {
 	mZMQpublisher.setsockopt(ZMQ_LINGER, 0);
 	// "ZMQ_SNDHWM: Set high water mark for outbound messages"
-	mZMQpublisher.setsockopt(ZMQ_SNDHWM, 2000);
+	//	mZMQpublisher.setsockopt(ZMQ_RCVHWM, 1000000);
+	//	mZMQpublisher.setsockopt(ZMQ_SNDHWM, 1000000);
 }
 
 bool Publisher::bindSocket(std::string port) {

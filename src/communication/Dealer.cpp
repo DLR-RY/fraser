@@ -46,7 +46,7 @@ std::string Dealer::getIPFrom(std::string modelName) {
 	s_send(mReqSocket, request);
 
 	std::string ip = s_recv(mReqSocket);
-	std::cout << "IP: " << ip << std::endl;
+//	std::cout << "IP: " << ip << std::endl;
 	return ip;
 }
 
@@ -56,7 +56,7 @@ std::string Dealer::getModelParameter(std::string modelName,
 	s_send(mReqSocket, request);
 
 	std::string paramValue = s_recv(mReqSocket);
-	std::cout << paramName << ": " << paramValue << std::endl;
+//	std::cout << paramName << ": " << paramValue << std::endl;
 	return paramValue;
 }
 
@@ -64,7 +64,7 @@ std::string Dealer::getPortNumFrom(std::string modelName) {
 	std::string request = modelName + "_port";
 	s_send(mReqSocket, request);
 	std::string port = s_recv(mReqSocket);
-	std::cout << "Port: " << port << std::endl;
+//	std::cout <<modelName <<" bind to Port: " << port << std::endl;
 	return port;
 }
 
@@ -72,7 +72,7 @@ std::string Dealer::getSynchronizationPort() {
 	std::string request = "sim_sync_port";
 	s_send(mReqSocket, request);
 	std::string port = s_recv(mReqSocket);
-	std::cout << "Port: " << port << std::endl;
+//	std::cout << "Port: " << port << std::endl;
 	return port;
 }
 

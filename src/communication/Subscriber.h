@@ -35,7 +35,7 @@ public:
 
 	void subscribeTo(std::string eventName);
 
-	bool receiveEvent(bool noBlock = false);
+	bool receiveEvent();
 
 	std::string getEventName() {
 		return mEventName;

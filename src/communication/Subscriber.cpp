@@ -20,6 +20,8 @@ Subscriber::Subscriber(zmq::context_t & ctx) :
 	// "The ZMQ_LINGER option shall set the linger period for the specified socket. The linger period determines how long
 	// pending messages which have yet to be sent to a peer shall linger in memory after a socket is closed"
 	mZMQsubscriber.setsockopt(ZMQ_LINGER, 0);
+	//	mZMQsubscriber.setsockopt(ZMQ_RCVHWM, 1000000);
+	//	mZMQsubscriber.setsockopt(ZMQ_SNDHWM, 1000000);
 }
 
 Subscriber::~Subscriber() {
@@ -29,6 +31,8 @@ Subscriber::~Subscriber() {
 
 bool Subscriber::connectToPub(std::string ip, std::string port) {
 	//  Prepare our context and subscriber
+	std::cout << mOwner << " connect to Publisher " << port << std::endl;
+
 	try {
 		mZMQsubscriber.connect("tcp://" + ip + ":" + port);
 	} catch (std::exception &e) {
@@ -76,36 +80,33 @@ bool Subscriber::synchronizeSub() {
 }
 
 void Subscriber::subscribeTo(std::string eventName) {
-	std::cout << mOwner<< " Subscribes to " << eventName << std::endl;
+//	std::cout << mOwner << " Subscribes to " << eventName << std::endl;
 	mZMQsubscriber.setsockopt(ZMQ_SUBSCRIBE, eventName.data(),
 			eventName.size());
 }
 
-bool Subscriber::receiveEvent(bool noBlock) {
-	//  Read envelope with address
+bool Subscriber::receiveEvent() {
+	bool receivedEnvelope = false;
+	bool receivedEvent = false;
 	zmq::message_t envelopeName;
-	mZMQsubscriber.recv(&envelopeName);
+	zmq::message_t event;
+
+	//  Read envelope with address
+	receivedEnvelope = mZMQsubscriber.recv(&envelopeName);
 	mEventName = std::string(static_cast<char*>(envelopeName.data()),
 			envelopeName.size());
 
-	//  Read message contents
-	zmq::message_t event;
-	bool receivedEvent = false;
+	receivedEvent = mZMQsubscriber.recv(&event);
 
-	if (noBlock) {
-		receivedEvent = mZMQsubscriber.recv(&event, ZMQ_DONTWAIT);
-	} else {
-		receivedEvent = mZMQsubscriber.recv(&event);
-	}
-
-	if (receivedEvent) {
+	if (receivedEvent && receivedEnvelope) {
 		mEventBuffer = event.data();
-	}
-//	else {
-//		mEventBuffer = nullptr;
-//	}
+		mEventName = std::string(static_cast<char*>(envelopeName.data()),
+				envelopeName.size());
 
+		return true;
+	} else {
+		return false;
+	}
 //	std::cout<<mOwner<<" receives Event["<<mEventName<<"] "<<std::endl;
-	return receivedEvent;
 }
 
