@@ -76,7 +76,7 @@ bool Subscriber::synchronizeSub() {
 }
 
 void Subscriber::subscribeTo(std::string eventName) {
-	std::cout << "Subscribe to " << eventName << std::endl;
+	std::cout << mOwner<< " Subscribes to " << eventName << std::endl;
 	mZMQsubscriber.setsockopt(ZMQ_SUBSCRIBE, eventName.data(),
 			eventName.size());
 }
@@ -100,9 +100,10 @@ bool Subscriber::receiveEvent(bool noBlock) {
 
 	if (receivedEvent) {
 		mEventBuffer = event.data();
-	} else {
-		mEventBuffer = nullptr;
 	}
+//	else {
+//		mEventBuffer = nullptr;
+//	}
 
 //	std::cout<<mOwner<<" receives Event["<<mEventName<<"] "<<std::endl;
 	return receivedEvent;
