@@ -31,7 +31,6 @@ Publisher::~Publisher() {
 void Publisher::preparePublisher() {
 	mZMQpublisher.setsockopt(ZMQ_LINGER, 0);
 	// "ZMQ_SNDHWM: Set high water mark for outbound messages"
-	//	mZMQpublisher.setsockopt(ZMQ_RCVHWM, 1000000);
 	//	mZMQpublisher.setsockopt(ZMQ_SNDHWM, 1000000);
 }
 
@@ -79,13 +78,12 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 			std::string message = s_recv(mZMQSyncService);
 
 			if (message == "OK") {
-				std::cout << "Received OK" << std::endl;
 				subscribers++;
 			}
 		}
 
 		counter++;
-		// Send ten "hello"-Event
+		// Send ten "Hello"-Event
 		if (counter > 10) {
 			std::cout
 					<< "have not received all replies from the subscribed models"
@@ -108,6 +106,4 @@ void Publisher::publishEvent(std::string identifier, uint8_t *bufferPointer,
 	zmq::message_t event(size);
 	memcpy((void *) event.data(), bufferPointer, size);
 	mZMQpublisher.send(event);
-
-	//std::cout<<"publish "<<identifier<<std::endl;
 }

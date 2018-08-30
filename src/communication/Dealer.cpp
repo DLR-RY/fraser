@@ -28,7 +28,7 @@ Dealer::Dealer(zmq::context_t & ctx, std::string identity) :
 	try {
 		mReqSocket.connect("tcp://" + SERVER_TASK_IP+ ":" + SERVER_TASK_PORT);
 	} catch (zmq::error_t &e) {
-		std::cout<<"Could not connect to DNS server"<<std::endl;
+		std::cout<<"Could not connect to Configuration Server"<<std::endl;
 	}
 }
 
@@ -41,12 +41,10 @@ void Dealer::stopDNSserver() {
 }
 
 std::string Dealer::getIPFrom(std::string modelName) {
-
 	std::string request = modelName + "_ip";
 	s_send(mReqSocket, request);
 
 	std::string ip = s_recv(mReqSocket);
-//	std::cout << "IP: " << ip << std::endl;
 	return ip;
 }
 
@@ -56,23 +54,22 @@ std::string Dealer::getModelParameter(std::string modelName,
 	s_send(mReqSocket, request);
 
 	std::string paramValue = s_recv(mReqSocket);
-//	std::cout << paramName << ": " << paramValue << std::endl;
 	return paramValue;
 }
 
 std::string Dealer::getPortNumFrom(std::string modelName) {
 	std::string request = modelName + "_port";
 	s_send(mReqSocket, request);
+
 	std::string port = s_recv(mReqSocket);
-//	std::cout <<modelName <<" bind to Port: " << port << std::endl;
 	return port;
 }
 
 std::string Dealer::getSynchronizationPort() {
 	std::string request = "sim_sync_port";
 	s_send(mReqSocket, request);
+
 	std::string port = s_recv(mReqSocket);
-//	std::cout << "Port: " << port << std::endl;
 	return port;
 }
 
@@ -80,23 +77,23 @@ std::vector<std::string> Dealer::getAllModelNames() {
 	std::string request = "all_model_names";
 	s_send(mReqSocket, request);
 
-	std::vector < std::string > modelNames = v_recv(mReqSocket);
+	std::vector<std::string> modelNames = v_recv(mReqSocket);
 	return modelNames;
 }
 
 uint64_t Dealer::getTotalNumberOfModels() {
 	std::string request = "total_num_models";
 	s_send(mReqSocket, request);
+
 	std::string num = s_recv(mReqSocket);
-	//std::cout << num << std::endl;
 	return std::stoi(num);
 }
 
 uint64_t Dealer::getNumberOfPersistModels() {
 	std::string request = "num_persist_models";
 	s_send(mReqSocket, request);
+
 	std::string num = s_recv(mReqSocket);
-	std::cout << num << std::endl;
 	return std::stoi(num);
 }
 
@@ -104,6 +101,6 @@ std::vector<std::string> Dealer::getModelDependencies() {
 	std::string request = "model_dependencies";
 	s_send(mReqSocket, request);
 
-	std::vector < std::string > modelDependencies = v_recv(mReqSocket);
+	std::vector<std::string> modelDependencies = v_recv(mReqSocket);
 	return modelDependencies;
 }
