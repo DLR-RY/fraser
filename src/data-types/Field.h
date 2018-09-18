@@ -67,5 +67,6 @@ BOOST_CLASS_IMPLEMENTATION( Field<int>, boost::serialization::object_serializabl
 BOOST_CLASS_IMPLEMENTATION( Field<double>, boost::serialization::object_serializable )
 BOOST_CLASS_IMPLEMENTATION( Field<bool>, boost::serialization::object_serializable )
 BOOST_CLASS_IMPLEMENTATION( Field<float>, boost::serialization::object_serializable )
+BOOST_CLASS_IMPLEMENTATION( Field<std::string>, boost::serialization::object_serializable )
 
 #endif /* DATA_TYPES_FIELD_H_ */
