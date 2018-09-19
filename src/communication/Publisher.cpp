@@ -29,7 +29,7 @@ Publisher::~Publisher() {
 }
 
 void Publisher::preparePublisher() {
-	mZMQpublisher.setsockopt(ZMQ_LINGER, 0);
+	mZMQpublisher.setsockopt(ZMQ_LINGER, 100);
 	// "ZMQ_SNDHWM: Set high water mark for outbound messages"
 	//	mZMQpublisher.setsockopt(ZMQ_SNDHWM, 1000000);
 }
@@ -47,7 +47,7 @@ bool Publisher::bindSocket(std::string port) {
 bool Publisher::preparePubSynchronization(std::string port) {
 	//  Socket to receive signals
 	if (!port.empty()) {
-		mZMQSyncService.setsockopt(ZMQ_LINGER, 0);
+		mZMQSyncService.setsockopt(ZMQ_LINGER, 100);
 		mZMQSyncService.setsockopt(ZMQ_RCVTIMEO, 1000); // TimeOut after 1000ms
 		mZMQSyncService.bind("tcp://*:" + port);
 		return true;

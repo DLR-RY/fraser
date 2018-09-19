@@ -19,7 +19,7 @@ Subscriber::Subscriber(zmq::context_t & ctx) :
 
 	// "The ZMQ_LINGER option shall set the linger period for the specified socket. The linger period determines how long
 	// pending messages which have yet to be sent to a peer shall linger in memory after a socket is closed"
-	mZMQsubscriber.setsockopt(ZMQ_LINGER, 0);
+	mZMQsubscriber.setsockopt(ZMQ_LINGER, 100);
 }
 
 Subscriber::~Subscriber() {
@@ -42,7 +42,7 @@ bool Subscriber::connectToPub(std::string ip, std::string port) {
 }
 
 bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
-	mZMQSyncService.setsockopt(ZMQ_LINGER, 0);
+	mZMQSyncService.setsockopt(ZMQ_LINGER, 100);
 
 	try {
 		mZMQSyncService.connect("tcp://" + ip + ":" + port);
