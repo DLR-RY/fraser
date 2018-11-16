@@ -13,9 +13,11 @@
 
 #include "Subscriber.h"
 
+#define SYNC_TIMEOUT     4000    //  msecs, (> 1000!)
+
 Subscriber::Subscriber(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQsubscriber(mZMQcontext, ZMQ_SUB), mZMQSyncService(
-				mZMQcontext, ZMQ_PUSH), mEventBuffer(nullptr) {
+				mZMQcontext, ZMQ_REQ), mEventBuffer(nullptr) {
 
 	// "The ZMQ_LINGER option shall set the linger period for the specified socket. The linger period determines how long
 	// pending messages which have yet to be sent to a peer shall linger in memory after a socket is closed"
@@ -42,7 +44,6 @@ bool Subscriber::connectToPub(std::string ip, std::string port) {
 }
 
 bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
-	mZMQSyncService.setsockopt(ZMQ_LINGER, 100);
 
 	try {
 		mZMQSyncService.connect("tcp://" + ip + ":" + port);
@@ -52,27 +53,36 @@ bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
 		return false;
 	}
 
-	this->subscribeTo("Hello");
+	//  Configure socket to not wait at close time
+	int linger = 0;
+	mZMQSyncService.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
 
 	return true;
 }
 
 bool Subscriber::synchronizeSub() {
-	// Wait for 'Hello'-Event from the publisher
-	while (true) {
-		mEventName = s_recv(mZMQsubscriber);
-		s_recv(mZMQsubscriber);
+	// send a synchronization request
+	s_send(mZMQSyncService, "");
 
-		if (mEventName == "Hello") {
-			s_send(mZMQSyncService, "OK");
-			break;
-		}
-		if (mEventName == "End") {
-			return false;
+	bool expectReply = true;
+	while (expectReply) {
+		//  Poll socket for a reply, with timeout
+		zmq::pollitem_t items[] = { { mZMQSyncService, 0, ZMQ_POLLIN, 0 } };
+		zmq::poll(&items[0], 1, SYNC_TIMEOUT);
+
+		//  If we got a reply, process it
+		if (items[0].revents & ZMQ_POLLIN) {
+			//  We got a reply from the server, must match sequence
+			s_recv(mZMQSyncService);
+
+			expectReply = false;
 		} else {
-			std::cout << "Have not received hello" << std::endl;
+			std::cout << mOwner << ": no response after synchronization request"
+					<< std::endl;
+			return false;
 		}
 	}
+
 	return true;
 }
 
@@ -96,8 +106,6 @@ bool Subscriber::receiveEvent() {
 
 	if (receivedEvent && receivedEnvelope) {
 		mEventBuffer = event.data();
-		mEventName = std::string(static_cast<char*>(envelopeName.data()),
-				envelopeName.size());
 
 		return true;
 	} else {

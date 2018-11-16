@@ -16,9 +16,11 @@
 #include <iostream>
 #include <memory>
 
+#define SYNC_TIMEOUT     5000    //  msecs, (> 1000!)
+
 Publisher::Publisher(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQpublisher(mZMQcontext, ZMQ_PUB), mZMQSyncService(
-				mZMQcontext, ZMQ_PULL) {
+				mZMQcontext, ZMQ_REP) {
 	// Prepare our context and publisher
 	preparePublisher();
 }
@@ -30,8 +32,6 @@ Publisher::~Publisher() {
 
 void Publisher::preparePublisher() {
 	mZMQpublisher.setsockopt(ZMQ_LINGER, 100);
-	// "ZMQ_SNDHWM: Set high water mark for outbound messages"
-	//	mZMQpublisher.setsockopt(ZMQ_SNDHWM, 1000000);
 }
 
 bool Publisher::bindSocket(std::string port) {
@@ -45,51 +45,50 @@ bool Publisher::bindSocket(std::string port) {
 }
 
 bool Publisher::preparePubSynchronization(std::string port) {
-	//  Socket to receive signals
-	if (!port.empty()) {
-		mZMQSyncService.setsockopt(ZMQ_LINGER, 100);
-		mZMQSyncService.setsockopt(ZMQ_RCVTIMEO, 1000); // TimeOut after 1000ms
+
+	try {
 		mZMQSyncService.bind("tcp://*:" + port);
-		return true;
-	} else {
-		std::cout << "Could not bind to sync port" << std::endl;
+	} catch (std::exception &e) {
+		std::cout << "Could not connect to synchronization service: "
+				<< e.what() << std::endl;
 		return false;
 	}
+
+	//  Configure socket to not wait at close time
+	int linger = 0;
+	mZMQSyncService.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+
+	return true;
 }
 
 bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 		uint64_t currentSimTime) {
-	//  Get synchronization from subscribers
+	//  Synchronization with subscribers
 	uint64_t subscribers = 0;
-	uint64_t counter = 0;
 
 	while (subscribers < expectedSubscribers) {
-		const std::string eventName = "Hello";
-		zmq::message_t envelopeName(eventName.size());
-		memcpy(envelopeName.data(), eventName.data(), eventName.size());
-		mZMQpublisher.send(envelopeName, ZMQ_SNDMORE);
 
-		const std::string simTime = std::to_string(currentSimTime);
-		zmq::message_t message(simTime.size());
-		memcpy(message.data(), simTime.data(), simTime.size());
-		mZMQpublisher.send(message);
+		bool expectMessage = true;
+		while (expectMessage) {
+			//  Poll socket for a reply, with timeout
+			zmq::pollitem_t items[] = { { mZMQSyncService, 0, ZMQ_POLLIN, 0 } };
+			zmq::poll(&items[0], 1, SYNC_TIMEOUT);
 
-		for (uint64_t i = 0; i < expectedSubscribers; i++) {
-			std::string message = s_recv(mZMQSyncService);
+			if (items[0].revents & ZMQ_POLLIN) {
+				s_recv(mZMQSyncService);
 
-			if (message == "OK") {
-				subscribers++;
+				expectMessage = false;
+			} else {
+				std::cout
+						<< "W: have not received all replies from the subscribed models"
+						<< std::endl;
+				return false;
 			}
 		}
 
-		counter++;
-		// Send ten "Hello"-Event
-		if (counter > 10) {
-			std::cout
-					<< "have not received all replies from the subscribed models"
-					<< std::endl;
-			return false;
-		}
+		s_send(mZMQSyncService, "");
+
+		subscribers++;
 	}
 
 	return true;
