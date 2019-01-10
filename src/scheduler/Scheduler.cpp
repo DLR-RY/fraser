@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, German Aerospace Center (DLR)
+ * Copyright (c) 2017-2018, German Aerospace Center (DLR)
  *
  * This file is part of the development version of FRASER.
  *
@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * Authors:
- * - 2017, Annika Ofenloch (DLR RY-AVS)
+ * - 2017-2018, Annika Ofenloch (DLR RY-AVS)
  */
 
 #include "Scheduler.h"
@@ -17,10 +17,7 @@ Scheduler::Scheduler() {
 
 }
 
-Scheduler::~Scheduler() {
-}
-
-void Scheduler::scheduleEvents(EventSet& eventList) {
+void Scheduler::scheduleEvents(std::vector<Event>& eventList) {
 	std::sort(eventList.begin(), eventList.end(),
 			[](Event const &a, Event const &b) {return a.priorityKey() > b.priorityKey();});
 }

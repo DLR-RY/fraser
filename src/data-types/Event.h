@@ -36,9 +36,10 @@ public:
 	}
 
 	// Overloaded Constructor
-	Event(std::string name, uint32_t data, int timestamp = -1, int period = 0, int repeat = 0,
-			Priority priority = Priority::NORMAL_PRIORITY) :
-			mName(name), mData(data), mTimestamp(timestamp), mPeriod(period), mRepeat(repeat), mPriority(priority) {
+	Event(std::string name, uint32_t data, int timestamp = -1, int period = 0,
+			int repeat = 0, Priority priority = Priority::NORMAL_PRIORITY) :
+			mName(name), mTimestamp(timestamp), mData(data), mPeriod(period), mRepeat(
+					repeat), mPriority(priority) {
 	}
 
 	// Overloaded Constructor
@@ -51,18 +52,18 @@ public:
 	Event& operator=(const Event* other) {
 		mName = other->mName;
 		mTimestamp = other->mTimestamp;
+		mData = other->mData;
 		mPeriod = other->mPeriod;
 		mRepeat = other->mRepeat;
 		mPriority = other->mPriority;
-		mData = other->mData;
 
 		return *this;
 	}
 
 	bool operator==(const Event* other) {
 		if (mName == other->mName && mTimestamp == other->mTimestamp
-				&& mPeriod == other->mPeriod && mRepeat == other->mRepeat
-				&& mPriority == other->mPriority && mData == other->mData) {
+				&& mData == other->mData && mPeriod == other->mPeriod
+				&& mRepeat == other->mRepeat && mPriority == other->mPriority) {
 
 			return true;
 		}
@@ -130,20 +131,18 @@ private:
 	void serialize(Archive& archive, const unsigned int) {
 		archive & boost::serialization::make_nvp("Name", mName);
 		archive & boost::serialization::make_nvp("Timestamp", mTimestamp);
+		archive & boost::serialization::make_nvp("Data", mData);
 		archive & boost::serialization::make_nvp("Period", mPeriod);
 		archive & boost::serialization::make_nvp("Repeat", mRepeat);
 		archive & boost::serialization::make_nvp("Priority", mPriority);
-		archive & boost::serialization::make_nvp("Data", mData);
 	}
 
 	std::string mName;
-	uint32_t mData;
 	uint64_t mTimestamp;
-
+	uint32_t mData;
 	int mPeriod;
 	int mRepeat;
 	Priority mPriority;
-
 };
 
 BOOST_CLASS_IMPLEMENTATION(Event, boost::serialization::object_serializable)

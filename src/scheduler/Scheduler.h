@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, German Aerospace Center (DLR)
+ * Copyright (c) 2017-2018, German Aerospace Center (DLR)
  *
  * This file is part of the development version of FRASER.
  *
@@ -8,26 +8,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * Authors:
- * - 2017, Annika Ofenloch (DLR RY-AVS)
+ * - 2017-2018, Annika Ofenloch (DLR RY-AVS)
  */
 
 #ifndef QUEUES_SCHEDULER_H_
 #define QUEUES_SCHEDULER_H_
 
-#include <vector>
 #include <algorithm>
+#include <boost/serialization/vector.hpp>
 
 #include "data-types/Event.h"
-#include "data-types/EventSet.h"
-
 
 class Scheduler {
 public:
 	Scheduler();
-	virtual ~Scheduler();
+	virtual ~Scheduler() = default;
 
-	//void scheduleEvents(std::vector<Event>& eventList);
-	void scheduleEvents(EventSet& eventList);
+	void scheduleEvents(std::vector<Event>& eventList);
 };
 
-#endif /* QUEUES_SCHEDULER_H_ */
+#endif /* SCHEDULER_SCHEDULER_H_ */
