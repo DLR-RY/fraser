@@ -30,6 +30,7 @@ public:
 
 	bool bindSocket(std::string port);
 	bool preparePubSynchronization(std::string port);
+	zmq::socket_t newSyncSocket();
 	bool synchronizePub(uint64_t expectedSubscribers, uint64_t currentSimTime);
 
 	// With event data
@@ -41,6 +42,7 @@ private:
 	zmq::context_t &mZMQcontext;
 	zmq::socket_t mZMQpublisher;
 	zmq::socket_t mZMQSyncService;
+	std::string mSyncPort;
 };
 
 #endif /* INTERFACES_PUBLISHER_H_ */

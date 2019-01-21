@@ -20,7 +20,7 @@
 
 Publisher::Publisher(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQpublisher(mZMQcontext, ZMQ_PUB), mZMQSyncService(
-				mZMQcontext, ZMQ_REP) {
+				mZMQcontext, ZMQ_REP), mSyncPort("") {
 	// Prepare our context and publisher
 	preparePublisher();
 }
@@ -45,9 +45,10 @@ bool Publisher::bindSocket(std::string port) {
 }
 
 bool Publisher::preparePubSynchronization(std::string port) {
+	mSyncPort = port;
 
 	try {
-		mZMQSyncService.bind("tcp://*:" + port);
+		mZMQSyncService.bind("tcp://*:" + mSyncPort);
 	} catch (std::exception &e) {
 		std::cout << "Could not connect to synchronization service: "
 				<< e.what() << std::endl;
@@ -59,6 +60,17 @@ bool Publisher::preparePubSynchronization(std::string port) {
 	mZMQSyncService.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
 
 	return true;
+}
+
+zmq::socket_t Publisher::newSyncSocket() {
+	std::cout << "I: connecting to server…" << std::endl;
+	zmq::socket_t syncSocket(mZMQcontext, ZMQ_REP);
+	syncSocket.bind("tcp://*:" + mSyncPort);
+
+	//  Configure socket to not wait at close time
+	int linger = 0;
+	syncSocket.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+	return syncSocket;
 }
 
 bool Publisher::synchronizePub(uint64_t expectedSubscribers,
@@ -86,6 +98,14 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 							<< std::endl;
 					return false;
 				} else {
+					// Configure socket to not wait at close time
+					mZMQSyncService.setsockopt(ZMQ_LINGER, 0);
+					// Close and remove it
+					mZMQSyncService.close();
+
+					// Create new connection
+					mZMQSyncService = newSyncSocket();
+
 					// Retry and send sync message again
 					s_send(mZMQSyncService, "");
 					retry--;
