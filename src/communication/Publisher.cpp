@@ -16,7 +16,7 @@
 #include <iostream>
 #include <memory>
 
-#define SYNC_TIMEOUT     5000    //  msecs, (> 1000!)
+#define SYNC_TIMEOUT     1500    //  msecs, (> 1000!)
 
 Publisher::Publisher(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQpublisher(mZMQcontext, ZMQ_PUB), mZMQSyncService(
@@ -65,6 +65,7 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 		uint64_t currentSimTime) {
 	//  Synchronization with subscribers
 	uint64_t subscribers = 0;
+	uint16_t retry = 5;
 
 	while (subscribers < expectedSubscribers) {
 
@@ -79,10 +80,16 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 
 				expectMessage = false;
 			} else {
-				std::cout
-						<< "W: have not received all replies from the subscribed models"
-						<< std::endl;
-				return false;
+				if (retry <= 0) {
+					std::cout
+							<< "W: have not received all replies from the subscribed models"
+							<< std::endl;
+					return false;
+				} else {
+					// Retry and send sync message again
+					s_send(mZMQSyncService, "");
+					retry--;
+				}
 			}
 		}
 
