@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, German Aerospace Center (DLR)
+ * Copyright (c) 2017-2019, German Aerospace Center (DLR)
  *
  * This file is part of the development version of FRASER.
  *
@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * Authors:
- * - 2017, Annika Ofenloch (DLR RY-AVS)
+ * - 2017-2019, Annika Ofenloch (DLR RY-AVS)
  */
 
 #ifndef INTERFACES_PUBLISHER_H_
@@ -30,7 +30,6 @@ public:
 
 	bool bindSocket(std::string port);
 	bool preparePubSynchronization(std::string port);
-	zmq::socket_t newSyncSocket();
 	bool synchronizePub(uint64_t expectedSubscribers, uint64_t currentSimTime);
 
 	// With event data
@@ -41,7 +40,8 @@ private:
 
 	zmq::context_t &mZMQcontext;
 	zmq::socket_t mZMQpublisher;
-	zmq::socket_t mZMQSyncService;
+	zmq::socket_t mZMQSyncRouter;
+
 	std::string mSyncPort;
 };
 

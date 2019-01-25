@@ -61,6 +61,20 @@ static inline std::string s_recv(zmq::socket_t & socket) {
 	return std::string(static_cast<char*>(message.data()), message.size());
 }
 
+//  Receive 0MQ string from socket and convert into string
+static inline bool s_recv2(zmq::socket_t & socket,
+		std::string& receivedString) {
+
+	zmq::message_t message;
+	if (socket.recv(&message)) {
+		receivedString = std::string(static_cast<char*>(message.data()),
+				message.size());
+		return true;
+	} else {
+		return false;
+	}
+}
+
 //  Serialize string vector, Convert string to 0MQ string, and send to socket
 static inline bool v_send(zmq::socket_t & socket,
 		std::vector<std::string> stringVector) {
