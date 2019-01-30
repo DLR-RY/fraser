@@ -34,6 +34,7 @@ public:
 	bool synchronizeSub();
 
 	void subscribeTo(std::string eventName);
+	void unsubscribeFrom(std::string eventName);
 
 	bool receiveEvent();
 
@@ -52,7 +53,7 @@ public:
 private:
 	zmq::context_t &mZMQcontext;
 	zmq::socket_t mZMQsubscriber;
-	zmq::socket_t mZMQSyncDealer;
+	zmq::socket_t mZMQSyncRequest;
 
 	std::string mOwner;
 	std::string mEventName;

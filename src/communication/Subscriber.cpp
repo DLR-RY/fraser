@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, German Aerospace Center (DLR)
+ * Copyright (c) 2017-2019, German Aerospace Center (DLR)
  *
  * This file is part of the development version of FRASER.
  *
@@ -13,21 +13,20 @@
 
 #include "Subscriber.h"
 
-#define REQUEST_TIMEOUT     1000    //  msecs, (> 1000!)
 #define REQUEST_RETRIES     5
 
 Subscriber::Subscriber(zmq::context_t & ctx) :
-		mZMQcontext(ctx), mZMQsubscriber(mZMQcontext, ZMQ_SUB), mZMQSyncDealer(
-				mZMQcontext, ZMQ_DEALER), mEventBuffer(nullptr) {
+		mZMQcontext(ctx), mZMQsubscriber(mZMQcontext, ZMQ_SUB), mZMQSyncRequest(
+				mZMQcontext, ZMQ_REQ), mEventBuffer(nullptr) {
 
 	// "The ZMQ_LINGER option shall set the linger period for the specified socket. The linger period determines how long
 	// pending messages which have yet to be sent to a peer shall linger in memory after a socket is closed"
-	mZMQsubscriber.setsockopt(ZMQ_LINGER, 100);
+	mZMQsubscriber.setsockopt(ZMQ_LINGER, 500);
 }
 
 Subscriber::~Subscriber() {
 	mZMQsubscriber.close();
-	mZMQSyncDealer.close();
+	mZMQSyncRequest.close();
 }
 
 bool Subscriber::connectToPub(std::string ip, std::string port) {
@@ -43,13 +42,12 @@ bool Subscriber::connectToPub(std::string ip, std::string port) {
 }
 
 bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
-	mZMQSyncDealer.setsockopt(ZMQ_RCVTIMEO, 500);
-	mZMQSyncDealer.setsockopt(ZMQ_SNDTIMEO, 500);
-	mZMQSyncDealer.setsockopt(ZMQ_LINGER, 500);
-	mZMQSyncDealer.setsockopt(ZMQ_IDENTITY, mOwner.c_str(), mOwner.size());
+	mZMQSyncRequest.setsockopt(ZMQ_SNDTIMEO, 500);
+	mZMQSyncRequest.setsockopt(ZMQ_RCVTIMEO, 500);
+	mZMQSyncRequest.setsockopt(ZMQ_LINGER, 500);
 
 	try {
-		mZMQSyncDealer.connect("tcp://" + ip + ":" + port);
+		mZMQSyncRequest.connect("tcp://" + ip + ":" + port);
 	} catch (std::exception &e) {
 		std::cout << "Could not connect to synchronization service: "
 				<< e.what() << std::endl;
@@ -60,38 +58,47 @@ bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
 }
 
 bool Subscriber::synchronizeSub() {
+	subscribeTo("hello");
 	int retries_left = REQUEST_RETRIES;
-
-	std::string request = "sync";
-	s_send(mZMQSyncDealer, request);
+	std::string msg = "";
 
 	while (true) {
-		//  We got a reply from the server, must match sequence
-		std::string reply = s_recv(mZMQSyncDealer);
+		msg = s_recv(mZMQsubscriber);
 
-		if (reply == (mOwner + "_is_synchronized")) {
-			std::cout << "[Info]: publisher replied (" << reply << ")" << std::endl;
+		if (msg == "hello") {
 
-			break;
-		} else {
-			std::cout << "[Error]: malformed reply from server: " << reply
-					<< std::endl;
-		}
+			//  We got a reply from the server, must match sequence
+			s_send(mZMQSyncRequest, mOwner);
 
-		if (--retries_left == 0) {
-			std::cout << "[Error]: server seems to be offline, abandoning"
-					<< std::endl;
+			std::string reply;
+			if (s_recv2(mZMQSyncRequest, reply)) {
 
-			return false;
+				if (reply == (mOwner + "_is_synchronized")) {
+					break;
+				} else {
+					//  Send request again
+					s_send(mZMQSyncRequest, mOwner);
+				}
 
-		} else {
-			std::cout << "[Warning]: no response from server, retrying…" << std::endl;
+			} else if (--retries_left == 0) {
+				std::cout
+						<< "[Error]: publisher seems to be offline, abandoning"
+						<< std::endl;
 
-			//  Send request again, on new socket
-			s_send(mZMQSyncDealer, request);
+				return false;
+
+			} else {
+				std::cout << "[Warning]: " << mOwner
+						<< " got no response from publisher, retrying…"
+						<< std::endl;
+
+				//  Send request again
+				s_send(mZMQSyncRequest, mOwner);
+			}
 		}
 	}
 
+	unsubscribeFrom("hello");
 	return true;
 }
 
@@ -100,20 +107,24 @@ void Subscriber::subscribeTo(std::string eventName) {
 			eventName.size());
 }
 
+void Subscriber::unsubscribeFrom(std::string eventName) {
+	mZMQsubscriber.setsockopt(ZMQ_UNSUBSCRIBE, eventName.data(),
+			eventName.size());
+}
+
 bool Subscriber::receiveEvent() {
-	bool receivedEnvelope = false;
-	bool receivedEvent = false;
 	zmq::message_t envelopeName;
 	zmq::message_t event;
 
-//  Read envelope with address
-	receivedEnvelope = mZMQsubscriber.recv(&envelopeName);
+	//  Read envelope with address
+	bool receivedEnvelope = mZMQsubscriber.recv(&envelopeName);
 	mEventName = std::string(static_cast<char*>(envelopeName.data()),
 			envelopeName.size());
 
-	receivedEvent = mZMQsubscriber.recv(&event);
+	bool receivedEvent = mZMQsubscriber.recv(&event);
 
 	if (receivedEvent && receivedEnvelope) {
+
 		mEventBuffer = event.data();
 
 		return true;

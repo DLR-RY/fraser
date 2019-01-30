@@ -1,0 +1,18 @@
+// event.fbs
+namespace event;
+
+enum Priority: int {
+	NORMAL_PRIORITY,
+	HIGH_PRIORITY
+}
+
+table Event {
+  name:string (key);
+  timestamp:ulong = -1;
+  priority:Priority = NORMAL_PRIORITY;
+  repeat:uint = 0;
+  period:uint = 0;
+  event_data:[ubyte] (flexbuffer);
+}
+
+root_type Event;

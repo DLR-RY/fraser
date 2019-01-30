@@ -18,6 +18,7 @@
 #include <string>
 
 #include "zhelpers.hpp"
+#include "resources/event_generated.h"
 
 class Publisher {
 public:
@@ -32,17 +33,27 @@ public:
 	bool preparePubSynchronization(std::string port);
 	bool synchronizePub(uint64_t expectedSubscribers, uint64_t currentSimTime);
 
-	// With event data
-	void publishEvent(std::string identifier, uint8_t *bufferPointer, uint32_t size);
+	// With string or no data
+	void publishEvent(std::string identifier, int timestamp, std::string data =
+			"", event::Priority priority = event::Priority_NORMAL_PRIORITY,
+			int repeat = 0, int period = 0);
+
+	// With flex data
+	void publishEvent(std::string identifier, int timestamp,
+			flexbuffers::Builder data, event::Priority priority =
+					event::Priority_NORMAL_PRIORITY, int repeat = 0,
+			int period = 0);
 
 private:
 	void preparePublisher();
 
 	zmq::context_t &mZMQcontext;
 	zmq::socket_t mZMQpublisher;
-	zmq::socket_t mZMQSyncRouter;
+	zmq::socket_t mZMQSyncResponse;
 
-	std::string mSyncPort;
+	// Event Serialiazation
+	flatbuffers::FlatBufferBuilder mFbb;
+	flatbuffers::Offset<event::Event> mEventOffset;
 };
 
 #endif /* INTERFACES_PUBLISHER_H_ */
