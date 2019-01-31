@@ -31,22 +31,14 @@ class Event {
 public:
 
 	Event() :
-			mName(""), mTimestamp(0), mData(0), mPeriod(0), mRepeat(0), mPriority(
-					Priority::NORMAL_PRIORITY) {
+			mName(""), mTimestamp(0), mPeriod(0), mRepeat(0), mPriority(
+					Priority::NORMAL_PRIORITY), mData(0) {
 	}
 
-	// Overloaded Constructor
-	Event(std::string name, uint32_t data, int timestamp = -1, int period = 0,
-			int repeat = 0, Priority priority = Priority::NORMAL_PRIORITY) :
-			mName(name), mTimestamp(timestamp), mData(data), mPeriod(period), mRepeat(
-					repeat), mPriority(priority) {
-	}
-
-	// Overloaded Constructor
 	Event(std::string name, int timestamp = -1, int period = 0, int repeat = 0,
-			Priority priority = Priority::NORMAL_PRIORITY) :
-			mName(name), mTimestamp(timestamp), mData(0), mPeriod(period), mRepeat(
-					repeat), mPriority(priority) {
+			Priority priority = Priority::NORMAL_PRIORITY, uint32_t data = 0) :
+			mName(name), mTimestamp(timestamp), mPeriod(period), mRepeat(
+					repeat), mPriority(priority), mData(data) {
 	}
 
 	Event& operator=(const Event* other) {
@@ -139,10 +131,10 @@ private:
 
 	std::string mName;
 	uint64_t mTimestamp;
-	uint32_t mData;
 	int mPeriod;
 	int mRepeat;
 	Priority mPriority;
+	uint32_t mData;
 };
 
 BOOST_CLASS_IMPLEMENTATION(Event, boost::serialization::object_serializable)
