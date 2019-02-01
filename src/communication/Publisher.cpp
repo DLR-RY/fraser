@@ -31,7 +31,7 @@ Publisher::~Publisher() {
 }
 
 void Publisher::preparePublisher() {
-	mZMQpublisher.setsockopt(ZMQ_LINGER, 500);
+	mZMQpublisher.setsockopt(ZMQ_LINGER, 1000);
 }
 
 bool Publisher::bindSocket(std::string port) {
@@ -47,7 +47,7 @@ bool Publisher::bindSocket(std::string port) {
 bool Publisher::preparePubSynchronization(std::string port) {
 	mZMQSyncResponse.setsockopt(ZMQ_RCVTIMEO, 500);
 	mZMQSyncResponse.setsockopt(ZMQ_SNDTIMEO, 500);
-	mZMQSyncResponse.setsockopt(ZMQ_LINGER, 500);
+	mZMQSyncResponse.setsockopt(ZMQ_LINGER, 1000);
 
 	try {
 		mZMQSyncResponse.bind("tcp://*:" + port);
@@ -77,14 +77,16 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 			subscribers++;
 
 		} else {
-			std::cout << "[Warning]: publisher received invalid or no message"
-					<< std::endl;
+
+			this->publishEvent("LogWarning", 0,
+					"publisher received invalid or no message");
 
 			s_send(mZMQpublisher, "hello");
 
 			if (--retries == 0) {
-				std::cout << "[Error]: synchronization failed, abandoning…"
-						<< std::endl;
+				this->publishEvent("LogError", 0,
+						"pub/sub synchronization failed, abandoning…");
+
 				return false;
 			}
 		}
