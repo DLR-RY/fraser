@@ -34,7 +34,7 @@ class InventoryWriter():
                 if(hostreference == host.get('id')):
                     models.append("{0}".format(model.get("id")))
     
-            self.config["all"]["{0} ansible_host={1} models='{2}'".format(hostname, hostaddress, '["{0}"]'.format('", "'.join(models)))] = None
+            self.config["all"]["{0} ansible_host={1} model_ids='{2}'".format(hostname, hostaddress, '["{0}"]'.format('", "'.join(models)))] = None
 
     def get_configuration(self):
         return self.config
