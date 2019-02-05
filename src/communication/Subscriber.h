@@ -43,7 +43,7 @@ public:
 	}
 
 	void* getEventBuffer() {
-		return mEventBuffer;
+		return mEventMsg.data();
 	}
 
 	void setOwnershipName(std::string name) {
@@ -54,10 +54,10 @@ private:
 	zmq::context_t &mZMQcontext;
 	zmq::socket_t mZMQsubscriber;
 	zmq::socket_t mZMQSyncRequest;
+	zmq::message_t mEventMsg;
 
 	std::string mOwner;
 	std::string mEventName;
-	void* mEventBuffer;
 };
 
 #endif /* SUBSCRIBER_H_ */
