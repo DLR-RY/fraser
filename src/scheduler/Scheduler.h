@@ -19,7 +19,8 @@
 
 #include "data-types/Event.h"
 
-class Scheduler {
+class Scheduler
+{
 public:
 	Scheduler();
 	virtual ~Scheduler() = default;

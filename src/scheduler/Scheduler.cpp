@@ -13,12 +13,15 @@
 
 #include "Scheduler.h"
 
-Scheduler::Scheduler() {
+Scheduler::Scheduler()
+{
 
 }
 
-void Scheduler::scheduleEvents(std::vector<Event>& eventList) {
+void Scheduler::scheduleEvents(std::vector<Event>& eventList)
+{
 	std::sort(eventList.begin(), eventList.end(),
-			[](Event const &a, Event const &b) {return a.priorityKey() > b.priorityKey();});
+			[](Event const &a, Event const &b)
+			{	return a.priorityKey() > b.priorityKey();});
 }
 

@@ -20,38 +20,47 @@
 
 Publisher::Publisher(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQpublisher(mZMQcontext, ZMQ_PUB), mZMQSyncResponse(
-				mZMQcontext, ZMQ_REP) {
+				mZMQcontext, ZMQ_REP)
+{
 	// Prepare our context and publisher
 	preparePublisher();
 }
 
-Publisher::~Publisher() {
+Publisher::~Publisher()
+{
 	mZMQpublisher.close();
 	mZMQSyncResponse.close();
 }
 
-void Publisher::preparePublisher() {
+void Publisher::preparePublisher()
+{
 	mZMQpublisher.setsockopt(ZMQ_LINGER, 1000);
 }
 
-bool Publisher::bindSocket(std::string port) {
-	if (!port.empty()) {
+bool Publisher::bindSocket(std::string port)
+{
+	if (!port.empty())
+	{
 		mZMQpublisher.bind("tcp://*:" + port);
 		return true;
-	} else {
+	} else
+	{
 		std::cout << "Could not bind to port" << std::endl;
 		return false;
 	}
 }
 
-bool Publisher::preparePubSynchronization(std::string port) {
+bool Publisher::preparePubSynchronization(std::string port)
+{
 	mZMQSyncResponse.setsockopt(ZMQ_RCVTIMEO, 500);
 	mZMQSyncResponse.setsockopt(ZMQ_SNDTIMEO, 500);
 	mZMQSyncResponse.setsockopt(ZMQ_LINGER, 1000);
 
-	try {
+	try
+	{
 		mZMQSyncResponse.bind("tcp://*:" + port);
-	} catch (std::exception &e) {
+	} catch (std::exception &e)
+	{
 		std::cout << "Could not connect to synchronization service: "
 				<< e.what() << std::endl;
 		return false;
@@ -61,7 +70,8 @@ bool Publisher::preparePubSynchronization(std::string port) {
 }
 
 bool Publisher::synchronizePub(uint64_t expectedSubscribers,
-		uint64_t currentSimTime) {
+		uint64_t currentSimTime)
+{
 	//  Synchronization with subscribers
 	uint64_t subscribers = 0;
 	uint16_t retries = REQUEST_RETRIES;
@@ -69,21 +79,25 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 
 	s_send(mZMQpublisher, "hello");
 
-	while (subscribers < expectedSubscribers) {
+	while (subscribers < expectedSubscribers)
+	{
 		//  Poll socket for a reply, with timeout
-		if (s_recv2(mZMQSyncResponse, reply)) {
+		if (s_recv2(mZMQSyncResponse, reply))
+		{
 
 			s_send(mZMQSyncResponse, reply + "_is_synchronized");
 			subscribers++;
 
-		} else {
+		} else
+		{
 
 			this->publishEvent("LogWarning", 0,
 					"publisher received invalid or no message");
 
 			s_send(mZMQpublisher, "hello");
 
-			if (--retries == 0) {
+			if (--retries == 0)
+			{
 				this->publishEvent("LogError", 0,
 						"pub/sub synchronization failed, abandoning…");
 
@@ -96,13 +110,16 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 }
 
 void Publisher::publishEvent(std::string identifier, int timestamp,
-		std::string data, event::Priority priority, int repeat, int period) {
+		std::string data, event::Priority priority, int repeat, int period)
+{
 
-	if (data.empty()) {
+	if (data.empty())
+	{
 		mFbb.Finish(
 				event::CreateEvent(mFbb, mFbb.CreateString(identifier),
 						timestamp, priority, repeat, period));
-	} else {
+	} else
+	{
 		flexbuffers::Builder flexbuffer;
 		flexbuffer.Add(data);
 		flexbuffer.Finish();
@@ -126,7 +143,8 @@ void Publisher::publishEvent(std::string identifier, int timestamp,
 
 void Publisher::publishEvent(std::string identifier, int timestamp,
 		flexbuffers::Builder data, event::Priority priority, int repeat,
-		int period) {
+		int period)
+{
 
 	auto flexData = mFbb.CreateVector(data.GetBuffer());
 	mFbb.Finish(

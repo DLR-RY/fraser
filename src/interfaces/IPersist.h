@@ -14,9 +14,11 @@
 #ifndef INTERFACES_IPERSIST_H_
 #define INTERFACES_IPERSIST_H_
 
-class IPersist {
+class IPersist
+{
 public:
-	virtual ~IPersist() {
+	virtual ~IPersist()
+	{
 	}
 
 	/** Save state of the model in a XML file. **/

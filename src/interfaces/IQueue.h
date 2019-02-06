@@ -14,9 +14,11 @@
 #ifndef INTERFACES_IQUEUE_H_
 #define INTERFACES_IQUEUE_H_
 
-class IQueue {
+class IQueue
+{
 public:
-	virtual ~IQueue() {
+	virtual ~IQueue()
+	{
 	}
 
 protected:

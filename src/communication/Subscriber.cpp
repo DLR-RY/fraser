@@ -17,22 +17,27 @@
 
 Subscriber::Subscriber(zmq::context_t & ctx) :
 		mZMQcontext(ctx), mZMQsubscriber(mZMQcontext, ZMQ_SUB), mZMQSyncRequest(
-				mZMQcontext, ZMQ_REQ) {
+				mZMQcontext, ZMQ_REQ)
+{
 
 	// "The ZMQ_LINGER option shall set the linger period for the specified socket. The linger period determines how long
 	// pending messages which have yet to be sent to a peer shall linger in memory after a socket is closed"
 	mZMQsubscriber.setsockopt(ZMQ_LINGER, 1000);
 }
 
-Subscriber::~Subscriber() {
+Subscriber::~Subscriber()
+{
 	mZMQsubscriber.close();
 	mZMQSyncRequest.close();
 }
 
-bool Subscriber::connectToPub(std::string ip, std::string port) {
-	try {
+bool Subscriber::connectToPub(std::string ip, std::string port)
+{
+	try
+	{
 		mZMQsubscriber.connect("tcp://" + ip + ":" + port);
-	} catch (std::exception &e) {
+	} catch (std::exception &e)
+	{
 		std::cout << "Could not connect to Publisher: " << e.what()
 				<< std::endl;
 		return false;
@@ -41,14 +46,17 @@ bool Subscriber::connectToPub(std::string ip, std::string port) {
 	return true;
 }
 
-bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
+bool Subscriber::prepareSubSynchronization(std::string ip, std::string port)
+{
 	mZMQSyncRequest.setsockopt(ZMQ_SNDTIMEO, 500);
 	mZMQSyncRequest.setsockopt(ZMQ_RCVTIMEO, 500);
 	mZMQSyncRequest.setsockopt(ZMQ_LINGER, 1000);
 
-	try {
+	try
+	{
 		mZMQSyncRequest.connect("tcp://" + ip + ":" + port);
-	} catch (std::exception &e) {
+	} catch (std::exception &e)
+	{
 		std::cout << "Could not connect to synchronization service: "
 				<< e.what() << std::endl;
 		return false;
@@ -57,37 +65,45 @@ bool Subscriber::prepareSubSynchronization(std::string ip, std::string port) {
 	return true;
 }
 
-bool Subscriber::synchronizeSub() {
+bool Subscriber::synchronizeSub()
+{
 	subscribeTo("hello");
 	int retries_left = REQUEST_RETRIES;
 	std::string msg = "";
 
-	while (true) {
+	while (true)
+	{
 		msg = s_recv(mZMQsubscriber);
 
-		if (msg == "hello") {
+		if (msg == "hello")
+		{
 
 			//  We got a reply from the server, must match sequence
 			s_send(mZMQSyncRequest, mOwner);
 
 			std::string reply;
-			if (s_recv2(mZMQSyncRequest, reply)) {
+			if (s_recv2(mZMQSyncRequest, reply))
+			{
 
-				if (reply == (mOwner + "_is_synchronized")) {
+				if (reply == (mOwner + "_is_synchronized"))
+				{
 					break;
-				} else {
+				} else
+				{
 					//  Send request again
 					s_send(mZMQSyncRequest, mOwner);
 				}
 
-			} else if (--retries_left == 0) {
+			} else if (--retries_left == 0)
+			{
 				std::cout
 						<< "[Error]: publisher seems to be offline, abandoning"
 						<< std::endl;
 
 				return false;
 
-			} else {
+			} else
+			{
 				std::cout << "[Warning]: " << mOwner
 						<< " got no response from publisher, retrying…"
 						<< std::endl;
@@ -102,17 +118,20 @@ bool Subscriber::synchronizeSub() {
 	return true;
 }
 
-void Subscriber::subscribeTo(std::string eventName) {
+void Subscriber::subscribeTo(std::string eventName)
+{
 	mZMQsubscriber.setsockopt(ZMQ_SUBSCRIBE, eventName.data(),
 			eventName.size());
 }
 
-void Subscriber::unsubscribeFrom(std::string eventName) {
+void Subscriber::unsubscribeFrom(std::string eventName)
+{
 	mZMQsubscriber.setsockopt(ZMQ_UNSUBSCRIBE, eventName.data(),
 			eventName.size());
 }
 
-bool Subscriber::receiveEvent() {
+bool Subscriber::receiveEvent()
+{
 	zmq::message_t envelopeName;
 
 	//  Read envelope with address
@@ -122,9 +141,11 @@ bool Subscriber::receiveEvent() {
 
 	bool receivedEvent = mZMQsubscriber.recv(&mEventMsg);
 
-	if (receivedEvent && receivedEnvelope) {
+	if (receivedEvent && receivedEnvelope)
+	{
 		return true;
-	} else {
+	} else
+	{
 		return false;
 	}
 }

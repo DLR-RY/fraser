@@ -18,32 +18,40 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/version.hpp>
 
-class SavepointSet: public std::vector<uint64_t> {
+class SavepointSet: public std::vector<uint64_t>
+{
 public:
 	SavepointSet() :
-			mSize(0) {
+			mSize(0)
+	{
 	}
 
-	virtual ~SavepointSet() {
+	virtual ~SavepointSet()
+	{
 	}
 
 private:
 	friend class boost::serialization::access;
 
 	template<class Archive>
-	void serialize(Archive &ar, const unsigned int) {
-		if (Archive::is_loading::value) {
+	void serialize(Archive &ar, const unsigned int)
+	{
+		if (Archive::is_loading::value)
+		{
 			this->clear();
 			ar & boost::serialization::make_nvp("Size", mSize);
-			for (uint64_t i = 0; i < mSize; i++) {
+			for (uint64_t i = 0; i < mSize; i++)
+			{
 				uint64_t savepoint;
 				ar & boost::serialization::make_nvp("Savepoint", savepoint);
 				this->push_back(savepoint);
 			}
-		} else {
+		} else
+		{
 			mSize = this->size();
 			ar & boost::serialization::make_nvp("Size", mSize);
-			for (uint64_t i = 0; i < mSize; i++) {
+			for (uint64_t i = 0; i < mSize; i++)
+			{
 				ar & boost::serialization::make_nvp("Savepoint", this->at(i));
 			}
 		}

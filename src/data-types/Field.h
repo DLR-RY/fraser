@@ -20,32 +20,40 @@
 #include <boost/serialization/serialization.hpp>
 
 template<typename T>
-class Field {
+class Field
+{
 public:
 	// Default Constructor
-	Field() {
+	Field()
+	{
 	}
 
 	Field(std::string name, T value) :
-			mName(name), mValue(value) {
+			mName(name), mValue(value)
+	{
 	}
 
-	~Field() {
+	~Field()
+	{
 	}
 
-	const std::string& getName() const {
+	const std::string& getName() const
+	{
 		return mName;
 	}
 
-	void setName(const std::string& name) {
+	void setName(const std::string& name)
+	{
 		mName = name;
 	}
 
-	T getValue() const {
+	T getValue() const
+	{
 		return mValue;
 	}
 
-	void setValue(T value) {
+	void setValue(T value)
+	{
 		mValue = value;
 	}
 
@@ -53,7 +61,8 @@ private:
 
 	friend class boost::serialization::access;
 	template<typename Archive>
-	void serialize(Archive& archive, const unsigned int) {
+	void serialize(Archive& archive, const unsigned int)
+	{
 		archive & boost::serialization::make_nvp("Name", mName);
 		archive & boost::serialization::make_nvp("Value", mValue);
 	}

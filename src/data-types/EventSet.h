@@ -20,32 +20,40 @@
 
 #include "Event.h"
 
-class EventSet: public std::vector<Event> {
+class EventSet: public std::vector<Event>
+{
 public:
 	EventSet() :
-			mSize(0) {
+			mSize(0)
+	{
 	}
 
-	virtual ~EventSet() {
+	virtual ~EventSet()
+	{
 	}
 
 private:
 	friend class boost::serialization::access;
 
 	template<class Archive>
-	void serialize(Archive &ar, const unsigned int) {
-		if (Archive::is_loading::value) {
+	void serialize(Archive &ar, const unsigned int)
+	{
+		if (Archive::is_loading::value)
+		{
 			this->clear();
 			ar & boost::serialization::make_nvp("Size", mSize);
-			for (int i = 0; i < mSize; i++) {
+			for (int i = 0; i < mSize; i++)
+			{
 				Event event;
 				ar & boost::serialization::make_nvp("Event", event);
 				this->push_back(event);
 			}
-		} else {
+		} else
+		{
 			mSize = this->size();
 			ar & boost::serialization::make_nvp("Size", mSize);
-			for (int i = 0; i < mSize; i++) {
+			for (int i = 0; i < mSize; i++)
+			{
 				ar & boost::serialization::make_nvp("Event", this->at(i));
 			}
 		}

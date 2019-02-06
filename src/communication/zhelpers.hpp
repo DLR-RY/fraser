@@ -28,7 +28,8 @@
 #include <boost/archive/text_iarchive.hpp>
 
 //  Receive 0MQ string from socket, deserialize it and convert into an string vector
-static inline std::vector<std::string> v_recv(zmq::socket_t & socket) {
+static inline std::vector<std::string> v_recv(zmq::socket_t & socket)
+{
 	zmq::message_t reply;
 	socket.recv(&reply);
 
@@ -38,14 +39,17 @@ static inline std::vector<std::string> v_recv(zmq::socket_t & socket) {
 	std::stringstream archive_stream(input_data_);
 	std::vector<std::string> stringVector;
 
-	try {
+	try
+	{
 		boost::archive::text_iarchive ia { archive_stream };
 		ia >> stringVector;
 
-	} catch (boost::archive::archive_exception& ex) {
+	} catch (boost::archive::archive_exception& ex)
+	{
 		std::cout << "Archive Exception during deserializing:" << std::endl;
 		std::cout << ex.what() << std::endl;
-	} catch (int e) {
+	} catch (int e)
+	{
 		std::cout << "EXCEPTION " << e << std::endl;
 	}
 
@@ -53,7 +57,8 @@ static inline std::vector<std::string> v_recv(zmq::socket_t & socket) {
 }
 
 //  Receive 0MQ string from socket and convert into string
-static inline std::string s_recv(zmq::socket_t & socket) {
+static inline std::string s_recv(zmq::socket_t & socket)
+{
 
 	zmq::message_t message;
 	socket.recv(&message);
@@ -62,30 +67,36 @@ static inline std::string s_recv(zmq::socket_t & socket) {
 }
 
 //  Receive 0MQ string from socket and convert into string
-static inline bool s_recv2(zmq::socket_t & socket,
-		std::string& receivedString) {
+static inline bool s_recv2(zmq::socket_t & socket, std::string& receivedString)
+{
 
 	zmq::message_t message;
-	if (socket.recv(&message)) {
+	if (socket.recv(&message))
+	{
 		receivedString = std::string(static_cast<char*>(message.data()),
 				message.size());
 		return true;
-	} else {
+	} else
+	{
 		return false;
 	}
 }
 
 //  Serialize string vector, Convert string to 0MQ string, and send to socket
 static inline bool v_send(zmq::socket_t & socket,
-		std::vector<std::string> stringVector) {
+		std::vector<std::string> stringVector)
+{
 	std::stringstream ss;
-	try {
+	try
+	{
 		boost::archive::text_oarchive oa { ss };
 		oa << stringVector;
-	} catch (boost::archive::archive_exception& ex) {
+	} catch (boost::archive::archive_exception& ex)
+	{
 		std::cout << "Archive Exception during serializing:" << std::endl;
 		std::cout << ex.what() << std::endl;
-	} catch (int e) {
+	} catch (int e)
+	{
 		std::cout << "EXCEPTION " << e << std::endl;
 	}
 
@@ -102,7 +113,8 @@ static inline bool v_send(zmq::socket_t & socket,
 }
 
 //  Convert string to 0MQ string and send to socket
-static inline bool s_send(zmq::socket_t & socket, const std::string & string) {
+static inline bool s_send(zmq::socket_t & socket, const std::string & string)
+{
 
 	zmq::message_t message(string.size());
 	memcpy(message.data(), string.data(), string.size());
@@ -113,7 +125,8 @@ static inline bool s_send(zmq::socket_t & socket, const std::string & string) {
 
 //  Sends string as 0MQ string, as multipart non-terminal
 static inline bool s_sendmore(zmq::socket_t & socket,
-		const std::string & string) {
+		const std::string & string)
+{
 
 	zmq::message_t message(string.size());
 	memcpy(message.data(), string.data(), string.size());

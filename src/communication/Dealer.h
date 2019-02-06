@@ -19,7 +19,8 @@
 
 #include "zhelpers.hpp"
 
-class Dealer {
+class Dealer
+{
 public:
 	Dealer(zmq::context_t & ctx, std::string identity);
 	virtual ~Dealer();

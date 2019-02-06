@@ -18,9 +18,11 @@
 // Is set by interrupt signal to stop the model
 static bool interruptOccured = false;
 
-class IModel {
+class IModel
+{
 public:
-	virtual ~IModel() {
+	virtual ~IModel()
+	{
 	}
 
 protected:
@@ -43,18 +45,23 @@ protected:
 	virtual std::string getDescription() const = 0;
 
 	/** Check if events from different simulation cycles are present. **/
-	bool foundCriticalSimCycle(uint64_t currentSimTime) {
+	bool foundCriticalSimCycle(uint64_t currentSimTime)
+	{
 
-		if (mCurrentSimCycle == 0) {
+		if (mCurrentSimCycle == 0)
+		{
 			mCurrentSimCycle = currentSimTime;
-		} else {
-			if (currentSimTime < mCurrentSimCycle) {
+		} else
+		{
+			if (currentSimTime < mCurrentSimCycle)
+			{
 				std::cout
 						<< "WARNING: Multiple delta cycles are running -> Current simulation time: "
 						<< currentSimTime << std::endl;
 
 				return true;
-			} else if (currentSimTime > mCurrentSimCycle) {
+			} else if (currentSimTime > mCurrentSimCycle)
+			{
 				mCurrentSimCycle = currentSimTime;
 			}
 		}
@@ -62,13 +69,15 @@ protected:
 		return false;
 	}
 
-	void registerInterruptSignal() {
+	void registerInterruptSignal()
+	{
 		// Register interrupt signal
 		signal(SIGINT, stopSignal);
 	}
 
 	// Capture interrupt signal to stop the model
-	static void stopSignal(int /*sig*/) {
+	static void stopSignal(int /*sig*/)
+	{
 		interruptOccured = true;
 	}
 

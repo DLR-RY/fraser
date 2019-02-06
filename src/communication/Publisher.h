@@ -20,7 +20,8 @@
 #include "zhelpers.hpp"
 #include "resources/event_generated.h"
 
-class Publisher {
+class Publisher
+{
 public:
 	Publisher(zmq::context_t & ctx);
 	virtual ~Publisher();

@@ -19,7 +19,8 @@
 
 #include "zhelpers.hpp"
 
-class Subscriber {
+class Subscriber
+{
 public:
 	Subscriber(zmq::context_t & ctx);
 	virtual ~Subscriber();
@@ -38,15 +39,18 @@ public:
 
 	bool receiveEvent();
 
-	std::string getEventName() {
+	std::string getEventName()
+	{
 		return mEventName;
 	}
 
-	void* getEventBuffer() {
+	void* getEventBuffer()
+	{
 		return mEventMsg.data();
 	}
 
-	void setOwnershipName(std::string name) {
+	void setOwnershipName(std::string name)
+	{
 		mOwner = name;
 	}
 
