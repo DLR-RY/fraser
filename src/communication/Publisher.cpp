@@ -112,7 +112,6 @@ bool Publisher::synchronizePub(uint64_t expectedSubscribers,
 void Publisher::publishEvent(std::string identifier, int timestamp,
 		std::string data, event::Priority priority, int repeat, int period)
 {
-
 	if (data.empty())
 	{
 		mFbb.Finish(
@@ -142,11 +141,10 @@ void Publisher::publishEvent(std::string identifier, int timestamp,
 }
 
 void Publisher::publishEvent(std::string identifier, int timestamp,
-		flexbuffers::Builder data, event::Priority priority, int repeat,
+		const std::vector<uint8_t> data, event::Priority priority, int repeat,
 		int period)
 {
-
-	auto flexData = mFbb.CreateVector(data.GetBuffer());
+	auto flexData = mFbb.CreateVector(data);
 	mFbb.Finish(
 			event::CreateEvent(mFbb, mFbb.CreateString(identifier), timestamp,
 					priority, repeat, period, flexData));

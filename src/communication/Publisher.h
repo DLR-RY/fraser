@@ -41,7 +41,7 @@ public:
 
 	// With flex data
 	void publishEvent(std::string identifier, int timestamp,
-			flexbuffers::Builder data, event::Priority priority =
+			const std::vector<uint8_t> data, event::Priority priority =
 					event::Priority_NORMAL_PRIORITY, int repeat = 0,
 			int period = 0);
 
