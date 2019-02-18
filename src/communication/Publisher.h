@@ -20,6 +20,8 @@
 #include "zhelpers.hpp"
 #include "resources/event_generated.h"
 
+using Flexbuffer = const std::vector<uint8_t>;
+
 class Publisher
 {
 public:
@@ -40,10 +42,9 @@ public:
 			int repeat = 0, int period = 0);
 
 	// With flex data
-	void publishEvent(std::string identifier, int timestamp,
-			const std::vector<uint8_t> data, event::Priority priority =
-					event::Priority_NORMAL_PRIORITY, int repeat = 0,
-			int period = 0);
+	void publishEvent(std::string identifier, int timestamp, Flexbuffer data,
+			event::Priority priority = event::Priority_NORMAL_PRIORITY,
+			int repeat = 0, int period = 0);
 
 private:
 	void preparePublisher();

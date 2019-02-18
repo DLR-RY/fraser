@@ -141,8 +141,7 @@ void Publisher::publishEvent(std::string identifier, int timestamp,
 }
 
 void Publisher::publishEvent(std::string identifier, int timestamp,
-		const std::vector<uint8_t> data, event::Priority priority, int repeat,
-		int period)
+		Flexbuffer data, event::Priority priority, int repeat, int period)
 {
 	auto flexData = mFbb.CreateVector(data);
 	mFbb.Finish(
