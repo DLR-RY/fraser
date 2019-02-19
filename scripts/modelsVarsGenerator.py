@@ -27,7 +27,6 @@ class ModelVarsWriter():
         
         for models in root.iter('Models'):     
            	config_path = models.get('configPath')
-        listerr = ['router1', 'router2']
         
         for model in root.iter('Model'):
             pathModel = model.get('path')
