@@ -28,14 +28,15 @@ class InventoryWriter():
             hostname = host.get("id")
             hostaddress = host.find("Address").text
 
-            models = []
+            model_list = []
+            path_list = []
             for model in root.iter('Model'):
                 hostreference = model.find("HostReference").get("hostID")
                 if(hostreference == host.get('id')):
-                    models.append("{0}".format(model.get("id")))
+                	model_list.append("{0}".format(model.get("id")))
+                	path_list.append("{0}".format(model.get("path")))
     
-            self.config["all"]["{0} ansible_host={1} model_ids='{2}'".format(hostname, hostaddress, '["{0}"]'.format('", "'.join(models)))] = None
-
+            self.config["all"]["{0} ansible_host={1} model_ids='{2}' model_paths='{3}'".format(hostname, hostaddress, '["{0}"]'.format('", "'.join(model_list)), '["{0}"]'.format('", "'.join(path_list)))] = None
     def get_configuration(self):
         return self.config
 
